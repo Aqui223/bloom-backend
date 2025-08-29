@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/gofiber/websocket/v2"
@@ -11,7 +12,35 @@ import (
 func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 	return func(c *websocket.Conn) {
 		defer c.Close()
+		clientToken := c.Query("token")
+		_, err := hub.JwtSvc.VerifyToken(clientToken)
+		if err != nil {
+			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
+			c.Close()
+			return
+		}
+
+		userID, err := hub.TokenSvc.ExtractUserID(clientToken)
+		if err != nil {
+			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
+			c.Close()
+			return
+		}
+
 		client := &types.Client{Conn: c}
+
+		chats, err := hub.Chats.GetChatsByUserId(clientToken)
+		if err != nil {
+			c.WriteMessage(websocket.TextMessage, []byte("Get chats error"))
+			c.Close()
+			return
+		}
+
+		if len(chats) > 0 {
+			for _, chat := range chats {
+				events.Join(hub, client, "chat"+strconv.Itoa(chat.ID))
+			}
+		}
 
 		for {
 			_, msg, err := c.ReadMessage()
@@ -29,12 +58,12 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 			data := parts[1]
 
 			switch cmd {
-			case "join":
-				events.Join(hub, client, data)
 			case "send":
-				roomMsg := strings.SplitN(data, "|", 2)
-				if len(roomMsg) == 2 {
-					events.Send(hub, client, roomMsg[0], roomMsg[1])
+				{
+					roomMsg := strings.SplitN(data, "|", 2)
+					if len(roomMsg) == 2 {
+						events.Send(hub, client, userID, roomMsg[0], roomMsg[1])
+					}
 				}
 			case "leave":
 				events.Leave(hub, client)

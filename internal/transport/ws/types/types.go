@@ -1,6 +1,10 @@
 package types
 
-import "github.com/gofiber/websocket/v2"
+import (
+	"github.com/gofiber/websocket/v2"
+	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	"github.com/slipe-fun/skid-backend/internal/service"
+)
 
 type Client struct {
 	Conn *websocket.Conn
@@ -8,11 +12,19 @@ type Client struct {
 }
 
 type Hub struct {
-	Clients map[string]map[*Client]bool
+	Clients  map[string]map[*Client]bool
+	Chats    *ChatApp.ChatApp
+	JwtSvc   *service.JWTService
+	TokenSvc *service.TokenService
 }
 
-func NewHub() *Hub {
-	return &Hub{Clients: make(map[string]map[*Client]bool)}
+func NewHub(Chats *ChatApp.ChatApp, JwtSvc *service.JWTService, TokenSvc *service.TokenService) *Hub {
+	return &Hub{
+		Clients:  make(map[string]map[*Client]bool),
+		Chats:    Chats,
+		JwtSvc:   JwtSvc,
+		TokenSvc: TokenSvc,
+	}
 }
 
 func (h *Hub) JoinRoom(client *Client, room string) {
