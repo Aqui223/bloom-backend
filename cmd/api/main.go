@@ -8,10 +8,12 @@ import (
 	// "github.com/gofiber/websocket/v2"
 	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
 	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	ChatRepo "github.com/slipe-fun/skid-backend/internal/repository/chat"
+	MessageRepo "github.com/slipe-fun/skid-backend/internal/repository/message"
 	UserRepo "github.com/slipe-fun/skid-backend/internal/repository/user"
 	"github.com/slipe-fun/skid-backend/internal/service"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
@@ -27,6 +29,7 @@ func main() {
 
 	userRepo := UserRepo.NewUserRepo(db)
 	chatRepo := ChatRepo.NewChatRepo(db)
+	messageRepo := MessageRepo.NewMessageRepo(db)
 
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
 	tokenSvc := service.NewTokenService(jwtSvc)
@@ -34,10 +37,11 @@ func main() {
 	authApp := AuthApp.NewAuthApp(userRepo, jwtSvc)
 	userApp := UserApp.NewUserApp(userRepo, jwtSvc, tokenSvc)
 	chatApp := ChatApp.NewChatApp(chatRepo, tokenSvc)
+	messageApp := MessageApp.NewMessageApp(messageRepo, chatApp, tokenSvc)
 
 	authHandler := auth.NewAuthHandler(authApp)
 	userHandler := user.NewUserHandler(userApp)
-	chatHandler := chat.NewChatHandler(chatApp, userApp)
+	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp)
 
 	fiberApp := fiber.New()
 
@@ -50,6 +54,7 @@ func main() {
 	fiberApp.Post("/chat/create", chatHandler.CreateChat)
 	fiberApp.Get("/chats", chatHandler.GetChatsByUserId)
 	fiberApp.Get("/chat/:id", chatHandler.GetChatById)
+	fiberApp.Get("/chat/:id/messages", chatHandler.GetChatMessages)
 	fiberApp.Post("/chat/:id/addkeys", chatHandler.AddChatKeys)
 
 	// fiberApp.Get("/ws", websocket.New(func(c *websocket.Conn) {

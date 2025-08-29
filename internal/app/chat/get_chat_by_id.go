@@ -1,8 +1,6 @@
 package ChatApp
 
 import (
-	"errors"
-
 	"github.com/slipe-fun/skid-backend/internal/domain"
 )
 
@@ -20,7 +18,7 @@ func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
 	}
 
 	if !c.HasMember(chat, userID) {
-		return nil, errors.New("user is not in chat")
+		// return nil, errors.New("user is not in chat")
 	}
 
 	return chat, nil
