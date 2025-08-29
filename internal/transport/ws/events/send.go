@@ -39,6 +39,19 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			return
 		}
 
+		if err := crypto.ValidateCEKFields(
+			message.CEKWrap,
+			message.CEKWrapIV,
+			message.CEKWrapSalt,
+			message.EncapsulatedKeySender,
+			message.CEKWrapSender,
+			message.CEKWrapSenderIV,
+			message.CEKWrapSenderSalt,
+		); err != nil {
+			log.Println("Неверные длины", err)
+			return
+		}
+
 		sendedMessage, err := hub.Messages.CreateMessage(token, message.ChatID, &domain.Message{
 			Ciphertext:            message.Ciphertext,
 			EncapsulatedKey:       message.EncapsulatedKey,
