@@ -6,7 +6,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	// "github.com/gofiber/websocket/v2"
-	"github.com/slipe-fun/skid-backend/internal/app"
+	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
+	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	ChatRepo "github.com/slipe-fun/skid-backend/internal/repository/chat"
@@ -29,9 +31,9 @@ func main() {
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
 	tokenSvc := service.NewTokenService(jwtSvc)
 
-	authApp := app.NewAuthApp(userRepo, jwtSvc)
-	userApp := app.NewUserApp(userRepo, jwtSvc, tokenSvc)
-	chatApp := app.NewChatApp(chatRepo, tokenSvc)
+	authApp := AuthApp.NewAuthApp(userRepo, jwtSvc)
+	userApp := UserApp.NewUserApp(userRepo, jwtSvc, tokenSvc)
+	chatApp := ChatApp.NewChatApp(chatRepo, tokenSvc)
 
 	authHandler := auth.NewAuthHandler(authApp)
 	userHandler := user.NewUserHandler(userApp)

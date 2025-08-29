@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"github.com/slipe-fun/skid-backend/internal/app"
+	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
 )
 
 type AuthHandler struct {
-	authApp *app.AuthApp
+	authApp *AuthApp.AuthApp
 }
 
-func NewAuthHandler(authApp *app.AuthApp) *AuthHandler {
+func NewAuthHandler(authApp *AuthApp.AuthApp) *AuthHandler {
 	return &AuthHandler{authApp: authApp}
 }

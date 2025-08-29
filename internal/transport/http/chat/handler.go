@@ -1,15 +1,16 @@
 package chat
 
 import (
-	"github.com/slipe-fun/skid-backend/internal/app"
+	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
 )
 
 type ChatHandler struct {
-	chatApp *app.ChatApp
-	userApp *app.UserApp
+	chatApp *ChatApp.ChatApp
+	userApp *UserApp.UserApp
 }
 
-func NewChatHandler(chatApp *app.ChatApp, userApp *app.UserApp) *ChatHandler {
+func NewChatHandler(chatApp *ChatApp.ChatApp, userApp *UserApp.UserApp) *ChatHandler {
 	return &ChatHandler{
 		chatApp: chatApp,
 		userApp: userApp,
