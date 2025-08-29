@@ -31,18 +31,19 @@ func (c *ChatApp) HasMember(chat *domain.Chat, memberID int) bool {
 
 func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
 	userID, err := c.tokenSvc.ExtractUserID(tokenStr)
+
 	if err != nil {
 		return nil, err
 	}
 
 	chat, err := c.chats.GetById(id)
 
-	if !c.HasMember(chat, userID) {
-		return nil, errors.New("user is not in chat")
-	}
-
 	if err != nil {
 		return nil, err
+	}
+
+	if !c.HasMember(chat, userID) {
+		return nil, errors.New("user is not in chat")
 	}
 
 	return chat, nil

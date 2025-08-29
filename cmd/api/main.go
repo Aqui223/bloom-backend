@@ -10,7 +10,9 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	"github.com/slipe-fun/skid-backend/internal/service"
-	"github.com/slipe-fun/skid-backend/internal/transport/http"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/user"
 )
 
 func main() {
@@ -29,9 +31,9 @@ func main() {
 	userApp := app.NewUserApp(userRepo, jwtSvc, tokenSvc)
 	chatApp := app.NewChatApp(chatRepo, tokenSvc)
 
-	authHandler := http.NewAuthHandler(authApp)
-	userHandler := http.NewUserHandler(userApp)
-	chatHandler := http.NewChatHandler(chatApp, userApp)
+	authHandler := auth.NewAuthHandler(authApp)
+	userHandler := user.NewUserHandler(userApp)
+	chatHandler := chat.NewChatHandler(chatApp, userApp)
 
 	fiberApp := fiber.New()
 
