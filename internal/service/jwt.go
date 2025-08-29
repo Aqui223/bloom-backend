@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/slipe-fun/skid-backend/internal/config"
 )
 
 type JWTService struct {
@@ -14,10 +15,11 @@ func NewJWTService(secret string) *JWTService {
 	return &JWTService{secret: secret}
 }
 
-func (s *JWTService) GenerateToken(userID int, expireDuration time.Duration) (string, error) {
+func (s *JWTService) GenerateToken(userID int) (string, error) {
+	cfg := config.LoadConfig("configs/config.yaml")
 	claims := jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(expireDuration).Unix(),
+		"exp":     time.Now().Add(cfg.JWTExpireDuration()).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

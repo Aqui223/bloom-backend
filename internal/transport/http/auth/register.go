@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -20,7 +18,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid request"})
 	}
 
-	token, user, err := h.authApp.Register(req.Username, req.Password, time.Hour*8760)
+	token, user, err := h.authApp.Register(req.Username, req.Password)
 
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})

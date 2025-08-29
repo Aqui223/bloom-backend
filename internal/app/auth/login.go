@@ -2,13 +2,12 @@ package AuthApp
 
 import (
 	"errors"
-	"time"
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service"
 )
 
-func (a *AuthApp) Login(username, password string, expire time.Duration) (string, *domain.User, error) {
+func (a *AuthApp) Login(username, password string) (string, *domain.User, error) {
 	user, err := a.users.GetByUsername(username)
 
 	if err != nil {
@@ -21,7 +20,7 @@ func (a *AuthApp) Login(username, password string, expire time.Duration) (string
 		return "", nil, errors.New("invalid credentials")
 	}
 
-	token, err := a.jwtSvc.GenerateToken(user.ID, expire)
+	token, err := a.jwtSvc.GenerateToken(user.ID)
 	if err != nil {
 		return "", nil, err
 	}

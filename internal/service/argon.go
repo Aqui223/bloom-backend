@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/slipe-fun/skid-backend/internal/config"
 	"golang.org/x/crypto/argon2"
 )
 
-var (
-	argonTime    uint32 = 1
-	argonMemory  uint32 = 16 * 1024
-	argonThreads uint8  = 4
-	argonKeyLen  uint32 = 32
-)
+var cfg = config.LoadConfig("configs/config.yaml")
+
+var argonTime uint32 = cfg.Argon2.Time
+var argonMemory uint32 = cfg.Argon2.Memory
+var argonThreads uint8 = cfg.Argon2.Threads
+var argonKeyLen uint32 = cfg.Argon2.KeyLen
 
 func generateSalt(n int) ([]byte, error) {
 	salt := make([]byte, n)
