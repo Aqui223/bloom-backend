@@ -20,21 +20,30 @@ func main() {
 	defer db.Close()
 
 	userRepo := repository.NewUserRepo(db)
+	chatRepo := repository.NewChatRepo(db)
 
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
+	tokenSvc := service.NewTokenService(jwtSvc)
 
 	authApp := app.NewAuthApp(userRepo, jwtSvc)
-	userApp := app.NewUserApp(userRepo, jwtSvc)
+	userApp := app.NewUserApp(userRepo, jwtSvc, tokenSvc)
+	chatApp := app.NewChatApp(chatRepo, tokenSvc)
 
 	authHandler := http.NewAuthHandler(authApp)
 	userHandler := http.NewUserHandler(userApp)
+	chatHandler := http.NewChatHandler(chatApp, userApp)
 
 	fiberApp := fiber.New()
 
-	fiberApp.Post("/login", authHandler.Login)
-	fiberApp.Post("/register", authHandler.Register)
+	fiberApp.Post("/auth/login", authHandler.Login)
+	fiberApp.Post("/auth/register", authHandler.Register)
+
 	fiberApp.Get("/user/me", userHandler.GetUser)
 	fiberApp.Get("/user/:id", userHandler.GetUserById)
+
+	fiberApp.Post("/chat/create", chatHandler.CreateChat)
+	fiberApp.Get("/chats", chatHandler.GetChatsByUserId)
+	fiberApp.Get("/chat/:id", chatHandler.GetChatById)
 
 	// fiberApp.Get("/ws", websocket.New(func(c *websocket.Conn) {
 	// 	defer c.Close()

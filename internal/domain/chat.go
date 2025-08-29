@@ -1,6 +1,13 @@
 package domain
 
+type Member struct {
+	ID             int    `json:"id"`
+	KyberPublicKey string `json:"kyberPublicKey"`
+	EcdhPublicKey  string `json:"ecdhPublicKey"`
+	EdPublicKey    string `json:"edPublicKey"`
+}
+
 type Chat struct {
 	ID      int      `db:"id"`
-	Members []string `db:"members"`
+	Members []Member `db:"members" json:"members"`
 }
