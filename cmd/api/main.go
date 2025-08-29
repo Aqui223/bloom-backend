@@ -18,6 +18,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/service"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/message"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/user"
 )
 
@@ -42,6 +43,7 @@ func main() {
 	authHandler := auth.NewAuthHandler(authApp)
 	userHandler := user.NewUserHandler(userApp)
 	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp)
+	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp)
 
 	fiberApp := fiber.New()
 
@@ -56,6 +58,8 @@ func main() {
 	fiberApp.Get("/chat/:id", chatHandler.GetChatById)
 	fiberApp.Get("/chat/:id/messages", chatHandler.GetChatMessages)
 	fiberApp.Post("/chat/:id/addkeys", chatHandler.AddChatKeys)
+
+	fiberApp.Get("/message/:id", messageHandler.GetMessageById)
 
 	// fiberApp.Get("/ws", websocket.New(func(c *websocket.Conn) {
 	// 	defer c.Close()
