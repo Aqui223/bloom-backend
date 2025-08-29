@@ -69,7 +69,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					continue
 				}
 
-				events.Send(hub, client, userID, room, socketMsg)
+				events.Send(hub, client, clientToken, userID, room, socketMsg)
 			case "join":
 				room := "chat" + strconv.Itoa(socketMsg.ChatID)
 

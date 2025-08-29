@@ -1,17 +1,50 @@
 package MessageRepo
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+)
 
-func (r *MessageRepo) Create(message *domain.Message) error {
+func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 	query := `INSERT INTO messages 
-		(ciphertext, encapsulated_key, nonce, chat_id, signature, salt) VALUES 
-		($1, $2, $3, $4, $5, $6) RETURNING id`
-	return r.db.QueryRow(query,
+		(ciphertext, encapsulated_key, nonce, chat_id, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt) 
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) 
+		RETURNING id, ciphertext, encapsulated_key, nonce, chat_id, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt`
+
+	created := domain.Message{}
+	err := r.db.QueryRow(
+		query,
 		message.Ciphertext,
 		message.EncapsulatedKey,
 		message.Nonce,
 		message.ChatID,
 		message.Signature,
-		message.Salt,
-	).Scan(&message.ID)
+		message.SignedPayload,
+		message.CEKWrap,
+		message.CEKWrapIV,
+		message.CEKWrapSalt,
+		message.EncapsulatedKeySender,
+		message.CEKWrapSender,
+		message.CEKWrapSenderIV,
+		message.CEKWrapSenderSalt,
+	).Scan(
+		&created.ID,
+		&created.Ciphertext,
+		&created.EncapsulatedKey,
+		&created.Nonce,
+		&created.ChatID,
+		&created.Signature,
+		&created.SignedPayload,
+		&created.CEKWrap,
+		&created.CEKWrapIV,
+		&created.CEKWrapSalt,
+		&created.EncapsulatedKeySender,
+		&created.CEKWrapSender,
+		&created.CEKWrapSenderIV,
+		&created.CEKWrapSenderSalt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &created, nil
 }

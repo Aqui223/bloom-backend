@@ -64,7 +64,7 @@ func main() {
 
 	fiberApp.Get("/message/:id", messageHandler.GetMessageById)
 
-	hub := types.NewHub(chatApp, jwtSvc, tokenSvc)
+	hub := types.NewHub(chatApp, messageApp, jwtSvc, tokenSvc)
 	fiberApp.Get("/ws", websocket.New(handler.HandleWS(hub)))
 
 	log.Fatal(fiberApp.Listen(fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)))

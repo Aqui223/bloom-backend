@@ -7,7 +7,6 @@ type Message struct {
 	Nonce                 string `db:"nonce" json:"nonce"`
 	ChatID                int    `db:"chat_id" json:"chat_id"`
 	Signature             string `db:"signature" json:"signature"`
-	Salt                  string `db:"salt" json:"salt"`
 	SignedPayload         string `db:"signed_payload" json:"signed_payload"`
 	CEKWrap               string `db:"cek_wrap" json:"cek_wrap"`
 	CEKWrapIV             string `db:"cek_wrap_iv" json:"cek_wrap_iv"`
