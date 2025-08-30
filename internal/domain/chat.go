@@ -8,6 +8,6 @@ type Member struct {
 }
 
 type Chat struct {
-	ID      int      `db:"id"`
+	ID      int      `db:"id" json:"id"`
 	Members []Member `db:"members" json:"members"`
 }
