@@ -5,8 +5,8 @@ import "github.com/gofiber/fiber/v2"
 func (h *UserHandler) GetUserById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "invalid_token",
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid_params",
 		})
 	}
 

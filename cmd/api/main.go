@@ -73,6 +73,7 @@ func main() {
 	fiberApp.Post("/auth/register", authHandler.Register)
 
 	fiberApp.Get("/user/me", userHandler.GetUser)
+	fiberApp.Get("/user/search", userHandler.SearchByUsername)
 	fiberApp.Get("/user/:id", userHandler.GetUserById)
 
 	fiberApp.Post("/chat/create", chatHandler.CreateChat)
