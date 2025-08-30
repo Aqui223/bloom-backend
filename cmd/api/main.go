@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -20,6 +21,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/message"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/middleware"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/user"
 	"github.com/slipe-fun/skid-backend/internal/transport/ws/handler"
 	"github.com/slipe-fun/skid-backend/internal/transport/ws/types"
@@ -49,6 +51,23 @@ func main() {
 	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp)
 
 	fiberApp := fiber.New()
+
+	if cfg.RateLimit.Enabled {
+		rateLimiter := middleware.NewAdaptiveRateLimiter(cfg.RateLimitWindow())
+
+		rateLimiter.SetLimit("auth", cfg.RateLimit.AuthRequestsPerMinute)
+		rateLimiter.SetLimit("api", cfg.RateLimit.GeneralRequestsPerMinute)
+
+		fiberApp.Use(rateLimiter.RateLimit())
+
+		go func() {
+			ticker := time.NewTicker(5 * time.Minute)
+			defer ticker.Stop()
+			for range ticker.C {
+				rateLimiter.Cleanup()
+			}
+		}()
+	}
 
 	fiberApp.Post("/auth/login", authHandler.Login)
 	fiberApp.Post("/auth/register", authHandler.Register)
