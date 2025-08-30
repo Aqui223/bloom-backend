@@ -9,21 +9,21 @@ func (h *ChatHandler) GetChatById(c *fiber.Ctx) error {
 	token, err := http.ExtractBearerToken(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_params",
 		})
 	}
 
 	chat, err := h.chatApp.GetChatById(token, id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "chat_not_found",
 		})
 	}
 

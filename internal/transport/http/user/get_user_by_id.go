@@ -6,14 +6,14 @@ func (h *UserHandler) GetUserById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
 	user, err := h.userApp.GetUserById(id)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "user_not_found",
 		})
 	}
 

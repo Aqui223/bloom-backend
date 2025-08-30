@@ -9,14 +9,14 @@ func (h *ChatHandler) GetChatMessages(c *fiber.Ctx) error {
 	token, err := http.ExtractBearerToken(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
 	chatId, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_params",
 		})
 	}
 
@@ -24,7 +24,7 @@ func (h *ChatHandler) GetChatMessages(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "cant_get_messages",
 		})
 	}
 

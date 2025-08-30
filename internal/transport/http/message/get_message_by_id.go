@@ -9,21 +9,21 @@ func (h *MessageHandler) GetMessageById(c *fiber.Ctx) error {
 	token, err := http.ExtractBearerToken(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_params",
 		})
 	}
 
 	message, err := h.messageApp.GetMessageById(token, id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "message_not_found",
 		})
 	}
 

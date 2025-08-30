@@ -9,14 +9,14 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	token, err := http.ExtractBearerToken(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
 	user, err := h.userApp.GetUserByToken(token)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "user_not_found",
 		})
 	}
 

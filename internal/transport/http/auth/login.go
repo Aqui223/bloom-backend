@@ -17,7 +17,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	token, user, err := h.authApp.Login(req.Username, req.Password)
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "cant_login_user"})
 	}
 
 	return c.JSON(fiber.Map{

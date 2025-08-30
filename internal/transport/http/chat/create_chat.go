@@ -9,7 +9,7 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 	token, err := http.ExtractBearerToken(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "invalid_token",
 		})
 	}
 
@@ -18,24 +18,24 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid_request"})
 	}
 
 	if req.Recipient == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "recipient required"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "no_recipient"})
 	}
 
 	user, err := h.userApp.GetUserById(req.Recipient)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "recipient not found",
+			"error": "recipient_not_found",
 		})
 	}
 
 	chat1, err := h.chatApp.GetChatWithUsers(token, req.Recipient)
 	if chat1 != nil || err == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "chat with user already exists",
+			"error": "already_exists",
 		})
 	}
 
@@ -43,7 +43,7 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "cant_create_chat",
 		})
 	}
 

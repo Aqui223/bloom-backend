@@ -11,17 +11,17 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid_request"})
 	}
 
 	if req.Password == "" || req.Username == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid request"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid_request"})
 	}
 
 	token, user, err := h.authApp.Register(req.Username, req.Password)
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "cant_create_user"})
 	}
 
 	return c.JSON(fiber.Map{
