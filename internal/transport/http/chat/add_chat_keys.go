@@ -20,7 +20,7 @@ func (h *ChatHandler) AddChatKeys(c *fiber.Ctx) error {
 	}
 
 	if chatId == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "no_chats"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "no_chat"})
 	}
 
 	var req struct {
