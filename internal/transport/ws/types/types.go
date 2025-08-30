@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
 	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
+	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
 	"github.com/slipe-fun/skid-backend/internal/service"
 )
 
@@ -13,18 +14,21 @@ type Client struct {
 }
 
 type Hub struct {
-	Clients  map[string]map[*Client]bool
-	Chats    *ChatApp.ChatApp
-	Messages *MessageApp.MessageApp
-	JwtSvc   *service.JWTService
-	TokenSvc *service.TokenService
+	Clients         map[string]map[*Client]bool
+	ClientsByUserID map[int]*Client
+	Chats           *ChatApp.ChatApp
+	Messages        *MessageApp.MessageApp
+	Users           *UserApp.UserApp
+	JwtSvc          *service.JWTService
+	TokenSvc        *service.TokenService
 }
 
-func NewHub(Chats *ChatApp.ChatApp, Messages *MessageApp.MessageApp, JwtSvc *service.JWTService, TokenSvc *service.TokenService) *Hub {
+func NewHub(Chats *ChatApp.ChatApp, Messages *MessageApp.MessageApp, Users *UserApp.UserApp, JwtSvc *service.JWTService, TokenSvc *service.TokenService) *Hub {
 	return &Hub{
 		Clients:  make(map[string]map[*Client]bool),
 		Chats:    Chats,
 		Messages: Messages,
+		Users:    Users,
 		JwtSvc:   JwtSvc,
 		TokenSvc: TokenSvc,
 	}

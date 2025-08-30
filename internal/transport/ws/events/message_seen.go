@@ -37,11 +37,13 @@ func MessageSeen(hub *types.Hub, sender *types.Client, token string, senderID in
 		}
 
 		outMsg := struct {
+			Type     string    `json:"type"`
 			UserID   int       `json:"user_id"`
 			ChatID   int       `json:"chat_id"`
 			SeenAt   time.Time `json:"seen_at"`
 			Messages []int     `json:"messages"`
 		}{
+			Type:     "message_seen",
 			UserID:   senderID,
 			ChatID:   messageSeen.ChatID,
 			SeenAt:   time.Now(),

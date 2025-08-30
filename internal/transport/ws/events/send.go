@@ -71,10 +71,12 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 		}
 
 		outMsg := struct {
-			ID     int `json:"id"`
-			UserID int `json:"user_id"`
+			Type   string `json:"type"`
+			ID     int    `json:"id"`
+			UserID int    `json:"user_id"`
 			domain.SocketMessage
 		}{
+			Type:          "message",
 			ID:            sendedMessage.ID,
 			UserID:        senderID,
 			SocketMessage: message,

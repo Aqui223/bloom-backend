@@ -32,6 +32,11 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 
 		client := &types.Client{Conn: c}
 
+		if hub.ClientsByUserID == nil {
+			hub.ClientsByUserID = make(map[int]*types.Client)
+		}
+		hub.ClientsByUserID[userID] = client
+
 		chats, err := hub.Chats.GetChatsByUserId(clientToken)
 		if err != nil {
 			c.WriteMessage(websocket.TextMessage, []byte("Get chats error"))
@@ -77,7 +82,14 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					continue
 				}
 				events.Send(hub, client, clientToken, userID, room, socketMsg)
+			case "create_chat":
+				var socketChat domain.SocketChat
+				if err := json.Unmarshal(msg, &socketChat); err != nil {
+					events.SendError(client, "invalid_message_format")
+					continue
+				}
 
+				events.CreateChat(hub, client, clientToken, userID, socketChat)
 			case "message_seen":
 				var seenMsg domain.SocketMessageSeen
 				if err := json.Unmarshal(msg, &seenMsg); err != nil {
