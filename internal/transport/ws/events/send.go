@@ -2,7 +2,6 @@ package events
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/fasthttp/websocket"
 	"github.com/slipe-fun/skid-backend/internal/domain"
@@ -14,7 +13,7 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 	if clients, ok := hub.Clients[room]; ok {
 		chat, err := hub.Chats.GetChatById(token, message.ChatID)
 		if err != nil || chat == nil {
-			log.Println("Не удалось получить чат:", err)
+			SendError(sender, "chat_not_found")
 			return
 		}
 
@@ -26,7 +25,7 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 		}
 		if member == nil {
-			log.Println("Пользователь не состоит в чате")
+			SendError(sender, "not_member")
 			return
 		}
 
@@ -35,7 +34,7 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			message.SignedPayload,
 			message.Signature,
 		); err != nil {
-			log.Println("Подпись не прошла проверку:", err)
+			SendError(sender, "failed_verify_signature")
 			return
 		}
 
@@ -48,7 +47,6 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			message.CEKWrapSenderIV,
 			message.CEKWrapSenderSalt,
 		); err != nil {
-			log.Println("Неверные длины", err)
 			return
 		}
 
@@ -68,7 +66,7 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			CEKWrapSenderSalt:     message.CEKWrapSenderSalt,
 		})
 		if err != nil {
-			log.Println("Failed to send message:", err)
+			SendError(sender, "failed_send_message")
 			return
 		}
 
@@ -84,13 +82,12 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 
 		b, err := json.Marshal(outMsg)
 		if err != nil {
-			log.Println("Failed to marshal message:", err)
 			return
 		}
 
 		for client := range clients {
 			if err := client.Conn.WriteMessage(websocket.TextMessage, b); err != nil {
-				log.Println("Failed to send message:", err)
+				SendError(sender, "failed_send_message")
 			}
 		}
 	}

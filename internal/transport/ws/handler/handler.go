@@ -48,13 +48,15 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 		for {
 			_, msg, err := c.ReadMessage()
 			if err != nil {
-				events.Leave(hub, client)
+				for room := range client.Rooms {
+					events.Leave(hub, client, room)
+				}
 				break
 			}
 
 			var socketMsg domain.SocketMessage
 			if err := json.Unmarshal(msg, &socketMsg); err != nil {
-				c.WriteMessage(websocket.TextMessage, []byte("Invalid message format"))
+				events.SendError(client, "invalid_message_format")
 				continue
 			}
 
@@ -65,7 +67,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 				allowed := service.IsUserInChat(chats, socketMsg.ChatID)
 
 				if !allowed {
-					c.WriteMessage(websocket.TextMessage, []byte("You are not a member of this chat"))
+					events.SendError(client, "not_member")
 					continue
 				}
 
@@ -76,13 +78,14 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 				allowed := service.IsUserInChat(chats, socketMsg.ChatID)
 
 				if !allowed {
-					c.WriteMessage(websocket.TextMessage, []byte("You are not a member of this chat"))
+					events.SendError(client, "not_member")
 					continue
 				}
 
 				events.Join(hub, client, room)
 			case "leave":
-				events.Leave(hub, client)
+				room := "chat" + strconv.Itoa(socketMsg.ChatID)
+				events.Leave(hub, client, room)
 			default:
 				log.Println("Unknown message type:", socketMsg.Type)
 			}

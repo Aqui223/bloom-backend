@@ -8,8 +8,8 @@ import (
 )
 
 type Client struct {
-	Conn *websocket.Conn
-	Room string
+	Conn  *websocket.Conn
+	Rooms map[string]bool
 }
 
 type Hub struct {
@@ -31,19 +31,33 @@ func NewHub(Chats *ChatApp.ChatApp, Messages *MessageApp.MessageApp, JwtSvc *ser
 }
 
 func (h *Hub) JoinRoom(client *Client, room string) {
-	client.Room = room
+	if client.Rooms == nil {
+		client.Rooms = make(map[string]bool)
+	}
+	client.Rooms[room] = true
+
 	if _, ok := h.Clients[room]; !ok {
 		h.Clients[room] = make(map[*Client]bool)
 	}
 	h.Clients[room][client] = true
 }
 
-func (h *Hub) LeaveRoom(client *Client) {
-	if clients, ok := h.Clients[client.Room]; ok {
+func (h *Hub) LeaveRoom(client *Client, room string) {
+	if _, exists := client.Rooms[room]; exists {
+		delete(client.Rooms, room)
+	}
+
+	if clients, ok := h.Clients[room]; ok {
 		delete(clients, client)
 		if len(clients) == 0 {
-			delete(h.Clients, client.Room)
+			delete(h.Clients, room)
 		}
+	}
+}
+
+func (h *Hub) LeaveAllRooms(client *Client) {
+	for room := range client.Rooms {
+		h.LeaveRoom(client, room)
 	}
 }
 
