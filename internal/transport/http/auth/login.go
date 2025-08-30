@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/slipe-fun/skid-backend/internal/config"
 )
 
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
@@ -12,6 +13,14 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid_request"})
+	}
+
+	if req.Password == "" || req.Username == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid_request"})
+	}
+
+	if len(req.Username) < 4 || !config.UsernameRegex.MatchString(req.Username) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid_username"})
 	}
 
 	token, user, err := h.authApp.Login(req.Username, req.Password)

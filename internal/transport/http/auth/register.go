@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/slipe-fun/skid-backend/internal/config"
 )
 
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
@@ -18,8 +19,11 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid_request"})
 	}
 
-	token, user, err := h.authApp.Register(req.Username, req.Password)
+	if len(req.Username) < 4 || !config.UsernameRegex.MatchString(req.Username) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid_username"})
+	}
 
+	token, user, err := h.authApp.Register(req.Username, req.Password)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "cant_create_user"})
 	}
