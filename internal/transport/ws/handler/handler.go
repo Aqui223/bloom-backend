@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/websocket/v2"
 	"github.com/slipe-fun/skid-backend/internal/domain"
@@ -20,14 +21,12 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 		_, err := hub.JwtSvc.VerifyToken(clientToken)
 		if err != nil {
 			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
-			c.Close()
 			return
 		}
 
 		userID, err := hub.TokenSvc.ExtractUserID(clientToken)
 		if err != nil {
 			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
-			c.Close()
 			return
 		}
 
@@ -41,7 +40,6 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 		chats, err := hub.Chats.GetChatsByUserId(clientToken)
 		if err != nil {
 			c.WriteMessage(websocket.TextMessage, []byte("Get chats error"))
-			c.Close()
 			return
 		}
 
@@ -50,6 +48,22 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 				events.Join(hub, client, "chat"+strconv.Itoa(chat.ID))
 			}
 		}
+
+		c.SetReadDeadline(time.Now().Add(70 * time.Second))
+		c.SetPongHandler(func(string) error {
+			c.SetReadDeadline(time.Now().Add(70 * time.Second))
+			return nil
+		})
+
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
+		go func() {
+			for range ticker.C {
+				if err := c.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(10*time.Second)); err != nil {
+					return 
+				}
+			}
+		}()
 
 		for {
 			_, msg, err := c.ReadMessage()
