@@ -2,6 +2,7 @@ package events
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/fasthttp/websocket"
 	"github.com/slipe-fun/skid-backend/internal/domain"
