@@ -48,7 +48,8 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"id":      chat.ID,
-		"members": chat.Members,
+		"id":             chat.ID,
+		"members":        chat.Members,
+		"encryption_key": chat.EncryptionKey,
 	})
 }

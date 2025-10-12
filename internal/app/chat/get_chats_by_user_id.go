@@ -1,6 +1,8 @@
 package ChatApp
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+)
 
 func (c *ChatApp) GetChatsByUserId(tokenStr string) ([]*domain.Chat, error) {
 	userID, err := c.tokenSvc.ExtractUserID(tokenStr)

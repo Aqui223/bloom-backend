@@ -1,17 +1,18 @@
 package domain
 
 type SocketMessage struct {
-	Ciphertext            string `json:"ciphertext"`
-	EncapsulatedKey       string `json:"encapsulated_key"`
-	Nonce                 string `json:"nonce"`
 	ChatID                int    `json:"chat_id"`
-	Signature             string `json:"signature"`
-	SignedPayload         string `json:"signed_payload"`
-	CEKWrap               string `json:"cek_wrap"`
-	CEKWrapIV             string `json:"cek_wrap_iv"`
-	CEKWrapSalt           string `json:"cek_wrap_salt"`
-	EncapsulatedKeySender string `json:"encapsulated_key_sender"`
-	CEKWrapSender         string `json:"cek_wrap_sender"`
-	CEKWrapSenderIV       string `json:"cek_wrap_sender_iv"`
-	CEKWrapSenderSalt     string `json:"cek_wrap_sender_salt"`
+	EncryptionType        string `json:"encryption_type"`
+	Ciphertext            string `json:"ciphertext"`
+	Nonce                 string `json:"nonce"`
+	EncapsulatedKey       string `json:"encapsulated_key,omitempty"`
+	Signature             string `json:"signature,omitempty"`
+	SignedPayload         string `json:"signed_payload,omitempty"`
+	CEKWrap               string `json:"cek_wrap,omitempty"`
+	CEKWrapIV             string `json:"cek_wrap_iv,omitempty"`
+	CEKWrapSalt           string `json:"cek_wrap_salt,omitempty"`
+	EncapsulatedKeySender string `json:"encapsulated_key_sender,omitempty"`
+	CEKWrapSender         string `json:"cek_wrap_sender,omitempty"`
+	CEKWrapSenderIV       string `json:"cek_wrap_sender_iv,omitempty"`
+	CEKWrapSenderSalt     string `json:"cek_wrap_sender_salt,omitempty"`
 }

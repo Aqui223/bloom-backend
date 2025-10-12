@@ -6,17 +6,17 @@ import (
 
 func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 	query := `INSERT INTO messages 
-		(ciphertext, encapsulated_key, nonce, chat_id, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt) 
+		(ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt) 
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) 
-		RETURNING id, ciphertext, encapsulated_key, nonce, chat_id, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt`
+		RETURNING id, ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt`
 
 	created := domain.Message{}
 	err := r.db.QueryRow(
 		query,
 		message.Ciphertext,
-		message.EncapsulatedKey,
 		message.Nonce,
 		message.ChatID,
+		message.EncapsulatedKey,
 		message.Signature,
 		message.SignedPayload,
 		message.CEKWrap,
@@ -29,9 +29,9 @@ func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 	).Scan(
 		&created.ID,
 		&created.Ciphertext,
-		&created.EncapsulatedKey,
 		&created.Nonce,
 		&created.ChatID,
+		&created.EncapsulatedKey,
 		&created.Signature,
 		&created.SignedPayload,
 		&created.CEKWrap,

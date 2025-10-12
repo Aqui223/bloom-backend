@@ -11,7 +11,7 @@ func (r *ChatRepo) GetWithUsers(id int, recipient int) (*domain.Chat, error) {
 	var membersJSON []byte
 
 	query := `
-	SELECT *
+	SELECT id, members, encryption_key
 	FROM chats
 	WHERE EXISTS (
 		SELECT 1
@@ -24,8 +24,7 @@ func (r *ChatRepo) GetWithUsers(id int, recipient int) (*domain.Chat, error) {
 		WHERE (m->>'id')::int = $2
 	);
 	`
-	err := r.db.QueryRow(query, id, recipient).Scan(&chat.ID, &membersJSON)
-
+	err := r.db.QueryRow(query, id, recipient).Scan(&chat.ID, &membersJSON, &chat.EncryptionKey)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,9 @@
 package ChatApp
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/crypto"
+)
 
 func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, error) {
 	userID, err := c.tokenSvc.ExtractUserID(tokenStr)
@@ -8,6 +11,12 @@ func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, erro
 		return nil, err
 	}
 
+	encryptionKey, err := crypto.GenerateEncryptionKey()
+	if err != nil {
+		return nil, err
+	}
+
+	encKey := encryptionKey
 	chat, err := c.chats.Create(&domain.Chat{
 		Members: []domain.Member{
 			{
@@ -23,6 +32,7 @@ func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, erro
 				EdPublicKey:    "",
 			},
 		},
+		EncryptionKey: &encKey,
 	})
 
 	if err != nil {

@@ -9,6 +9,7 @@ type Member struct {
 }
 
 type Chat struct {
-	ID      int      `db:"id" json:"id"`
-	Members []Member `db:"members" json:"members"`
+	ID            int      `db:"id" json:"id"`
+	Members       []Member `db:"members" json:"members"`
+	EncryptionKey *string  `db:"encryption_key" json:"encryption_key"`
 }
