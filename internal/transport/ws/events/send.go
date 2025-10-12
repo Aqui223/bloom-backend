@@ -2,6 +2,7 @@ package events
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/fasthttp/websocket"
 	"github.com/slipe-fun/skid-backend/internal/domain"
@@ -38,7 +39,42 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 
 		switch message.EncryptionType {
 		case "server":
+			sendedMessage, err := hub.Messages.CreateMessage(token, message.ChatID, &domain.Message{
+				Ciphertext: message.Ciphertext,
+				Nonce:      message.Nonce,
+				ChatID:     message.ChatID,
+			})
 
+			if err != nil {
+				fmt.Println(err)
+				SendError(sender, "failed_send_message")
+				return
+			}
+
+			outMsg := struct {
+				Type           string `json:"type"`
+				EncryptionType string `json:"encryption_type"`
+				ID             int    `json:"id"`
+				UserID         int    `json:"user_id"`
+				domain.SocketMessage
+			}{
+				Type:           "message",
+				EncryptionType: "server",
+				ID:             sendedMessage.ID,
+				UserID:         senderID,
+				SocketMessage:  message,
+			}
+
+			b, err := json.Marshal(outMsg)
+			if err != nil {
+				return
+			}
+
+			for client := range clients {
+				if err := client.Conn.WriteMessage(websocket.TextMessage, b); err != nil {
+					SendError(sender, "failed_send_message")
+				}
+			}
 		case "client":
 			if err := crypto.VerifySignature(
 				member.EdPublicKey,
@@ -84,15 +120,17 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 
 			outMsg := struct {
-				Type   string `json:"type"`
-				ID     int    `json:"id"`
-				UserID int    `json:"user_id"`
+				Type           string `json:"type"`
+				EncryptionType string `json:"encryption_type"`
+				ID             int    `json:"id"`
+				UserID         int    `json:"user_id"`
 				domain.SocketMessage
 			}{
-				Type:          "message",
-				ID:            sendedMessage.ID,
-				UserID:        senderID,
-				SocketMessage: message,
+				Type:           "message",
+				EncryptionType: "client",
+				ID:             sendedMessage.ID,
+				UserID:         senderID,
+				SocketMessage:  message,
 			}
 
 			b, err := json.Marshal(outMsg)

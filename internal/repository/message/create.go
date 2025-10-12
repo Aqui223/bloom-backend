@@ -11,21 +11,22 @@ func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 		RETURNING id, ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt`
 
 	created := domain.Message{}
+
 	err := r.db.QueryRow(
 		query,
 		message.Ciphertext,
 		message.Nonce,
 		message.ChatID,
-		message.EncapsulatedKey,
-		message.Signature,
-		message.SignedPayload,
-		message.CEKWrap,
-		message.CEKWrapIV,
-		message.CEKWrapSalt,
-		message.EncapsulatedKeySender,
-		message.CEKWrapSender,
-		message.CEKWrapSenderIV,
-		message.CEKWrapSenderSalt,
+		nullStr(message.EncapsulatedKey),
+		nullStr(message.Signature),
+		nullStr(message.SignedPayload),
+		nullStr(message.CEKWrap),
+		nullStr(message.CEKWrapIV),
+		nullStr(message.CEKWrapSalt),
+		nullStr(message.EncapsulatedKeySender),
+		nullStr(message.CEKWrapSender),
+		nullStr(message.CEKWrapSenderIV),
+		nullStr(message.CEKWrapSenderSalt),
 	).Scan(
 		&created.ID,
 		&created.Ciphertext,
@@ -47,4 +48,11 @@ func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 	}
 
 	return &created, nil
+}
+
+func nullStr(s *string) interface{} {
+	if s == nil {
+		return nil
+	}
+	return *s
 }
