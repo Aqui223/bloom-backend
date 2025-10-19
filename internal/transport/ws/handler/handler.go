@@ -60,7 +60,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 		go func() {
 			for range ticker.C {
 				if err := c.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(10*time.Second)); err != nil {
-					return 
+					return
 				}
 			}
 		}()
@@ -114,6 +114,8 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 				}
 
 				events.CreateChat(hub, client, clientToken, userID, socketChat)
+
+				chats, _ = hub.Chats.GetChatsByUserId(clientToken)
 			case "message_seen":
 				var seenMsg domain.SocketMessageSeen
 				if err := json.Unmarshal(msg, &seenMsg); err != nil {
