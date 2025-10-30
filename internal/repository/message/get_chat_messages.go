@@ -51,6 +51,7 @@ func (r *MessageRepo) GetChatMessages(id int) ([]*domain.Message, error) {
 			&message.CEKWrapSender,
 			&message.CEKWrapSenderIV,
 			&message.CEKWrapSenderSalt,
+			&message.ReplyTo,
 		)
 		if err != nil {
 			return nil, err

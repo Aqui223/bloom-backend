@@ -44,14 +44,14 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			return
 		}
 
-		var replyTo *domain.Message
+		var replyTo *domain.MessageWithReply
 		if message.ReplyTo != 0 {
-			replyToMessage, err := hub.Messages.GetMessageById(token, message.ReplyTo)
-			if err != nil || replyToMessage == nil || replyToMessage.ChatID != chat.ID {
+			reply_to_message, err := hub.Messages.GetMessageById(token, message.ReplyTo)
+			if err != nil || reply_to_message == nil || reply_to_message.ChatID != chat.ID {
 				SendError(sender, "reply_to_not_found")
 				return
 			}
-			replyTo = replyToMessage
+			replyTo = reply_to_message
 		}
 
 		switch message.EncryptionType {
@@ -70,11 +70,11 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 
 			outMsg := struct {
-				Type           string          `json:"type"`
-				EncryptionType string          `json:"encryption_type"`
-				ID             int             `json:"id"`
-				UserID         int             `json:"user_id"`
-				ReplyTo        *domain.Message `json:"reply_to,omitempty"`
+				Type           string                   `json:"type"`
+				EncryptionType string                   `json:"encryption_type"`
+				ID             int                      `json:"id"`
+				UserID         int                      `json:"user_id"`
+				ReplyTo        *domain.MessageWithReply `json:"reply_to,omitempty"`
 				domain.SocketMessage
 			}{
 				Type:           "message",
@@ -141,11 +141,11 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 
 			outMsg := struct {
-				Type           string          `json:"type"`
-				EncryptionType string          `json:"encryption_type"`
-				ID             int             `json:"id"`
-				UserID         int             `json:"user_id"`
-				ReplyTo        *domain.Message `json:"reply_to,omitempty"`
+				Type           string                   `json:"type"`
+				EncryptionType string                   `json:"encryption_type"`
+				ID             int                      `json:"id"`
+				UserID         int                      `json:"user_id"`
+				ReplyTo        *domain.MessageWithReply `json:"reply_to,omitempty"`
 				domain.SocketMessage
 			}{
 				Type:           "message",

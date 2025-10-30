@@ -21,7 +21,7 @@ func (h *MessageHandler) GetMessageById(c *fiber.Ctx) error {
 	}
 
 	message, err := h.messageApp.GetMessageById(token, id)
-	if err != nil {
+	if err != nil || message == nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "message_not_found",
 		})

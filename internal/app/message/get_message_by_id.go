@@ -4,7 +4,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 )
 
-func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.Message, error) {
+func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.MessageWithReply, error) {
 	_, err := c.tokenSvc.ExtractUserID(tokenStr)
 	if err != nil {
 		return nil, err
@@ -17,8 +17,19 @@ func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.Message, e
 
 	_, chaterr := c.chats.GetChatById(tokenStr, message.ChatID)
 	if chaterr != nil {
-		return nil, chaterr
+		return nil, err
 	}
 
-	return message, nil
+	result := &domain.MessageWithReply{
+		Message: *message,
+	}
+
+	if message.ReplyTo != nil {
+		replyToMessage, err := c.messages.GetById(*message.ReplyTo)
+		if err == nil && replyToMessage != nil && replyToMessage.ChatID == message.ChatID {
+			result.ReplyToMessage = replyToMessage
+		}
+	}
+
+	return result, nil
 }

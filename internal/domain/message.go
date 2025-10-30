@@ -20,3 +20,8 @@ type Message struct {
 	Seen                  *time.Time `db:"seen" json:"seen,omitempty"`
 	ReplyTo               *int       `db:"reply_to" json:"reply_to,omitempty"`
 }
+
+type MessageWithReply struct {
+	Message
+	ReplyToMessage *Message `json:"reply_to,omitempty"`
+}
