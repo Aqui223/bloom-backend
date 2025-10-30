@@ -17,6 +17,13 @@ func strPtrOrNil(s string) *string {
 	return &s
 }
 
+func intPtrOrNil(i int) *int {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
+
 func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room string, message domain.SocketMessage) {
 	if clients, ok := hub.Clients[room]; ok {
 		chat, err := hub.Chats.GetChatById(token, message.ChatID)
@@ -37,12 +44,23 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			return
 		}
 
+		var replyTo *domain.Message
+		if message.ReplyTo != 0 {
+			replyToMessage, err := hub.Messages.GetMessageById(token, message.ReplyTo)
+			if err != nil || replyToMessage == nil || replyToMessage.ChatID != chat.ID {
+				SendError(sender, "reply_to_not_found")
+				return
+			}
+			replyTo = replyToMessage
+		}
+
 		switch message.EncryptionType {
 		case "server":
 			sendedMessage, err := hub.Messages.CreateMessage(token, message.ChatID, &domain.Message{
 				Ciphertext: message.Ciphertext,
 				Nonce:      message.Nonce,
 				ChatID:     message.ChatID,
+				ReplyTo:    intPtrOrNil(message.ReplyTo),
 			})
 
 			if err != nil {
@@ -52,16 +70,18 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 
 			outMsg := struct {
-				Type           string `json:"type"`
-				EncryptionType string `json:"encryption_type"`
-				ID             int    `json:"id"`
-				UserID         int    `json:"user_id"`
+				Type           string          `json:"type"`
+				EncryptionType string          `json:"encryption_type"`
+				ID             int             `json:"id"`
+				UserID         int             `json:"user_id"`
+				ReplyTo        *domain.Message `json:"reply_to,omitempty"`
 				domain.SocketMessage
 			}{
 				Type:           "message",
 				EncryptionType: "server",
 				ID:             sendedMessage.ID,
 				UserID:         senderID,
+				ReplyTo:        replyTo,
 				SocketMessage:  message,
 			}
 
@@ -101,6 +121,7 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 				Ciphertext: message.Ciphertext,
 				Nonce:      message.Nonce,
 				ChatID:     message.ChatID,
+				ReplyTo:    intPtrOrNil(message.ReplyTo),
 
 				EncapsulatedKey:       strPtrOrNil(message.EncapsulatedKey),
 				Signature:             strPtrOrNil(message.Signature),
@@ -120,16 +141,18 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			}
 
 			outMsg := struct {
-				Type           string `json:"type"`
-				EncryptionType string `json:"encryption_type"`
-				ID             int    `json:"id"`
-				UserID         int    `json:"user_id"`
+				Type           string          `json:"type"`
+				EncryptionType string          `json:"encryption_type"`
+				ID             int             `json:"id"`
+				UserID         int             `json:"user_id"`
+				ReplyTo        *domain.Message `json:"reply_to,omitempty"`
 				domain.SocketMessage
 			}{
 				Type:           "message",
 				EncryptionType: "client",
 				ID:             sendedMessage.ID,
 				UserID:         senderID,
+				ReplyTo:        replyTo,
 				SocketMessage:  message,
 			}
 

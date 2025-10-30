@@ -31,4 +31,4 @@ go.work.sum
 # .idea/
 # .vscode/
 
-configs/config.yaml
+.DS_STORE

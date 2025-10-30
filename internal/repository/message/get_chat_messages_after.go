@@ -21,7 +21,8 @@ func (r *MessageRepo) GetChatMessagesAfter(chatId int, afterId int) ([]*domain.M
 		COALESCE(encapsulated_key_sender, '') AS encapsulated_key_sender,
 		COALESCE(cek_wrap_sender, '') AS cek_wrap_sender,
 		COALESCE(cek_wrap_sender_iv, '') AS cek_wrap_sender_iv,
-		COALESCE(cek_wrap_sender_salt, '') AS cek_wrap_sender_salt
+		COALESCE(cek_wrap_sender_salt, '') AS cek_wrap_sender_salt,
+		COALESCE(reply_to, 0) AS reply_to
 	FROM messages
 	WHERE chat_id = $1 AND id > $2
 	`, chatId, afterId)

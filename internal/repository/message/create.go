@@ -6,9 +6,9 @@ import (
 
 func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 	query := `INSERT INTO messages 
-		(ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt) 
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) 
-		RETURNING id, ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt`
+		(ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt, reply_to) 
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) 
+		RETURNING id, ciphertext, nonce, chat_id, encapsulated_key, signature, signed_payload, cek_wrap, cek_wrap_iv, cek_wrap_salt, encapsulated_key_sender, cek_wrap_sender, cek_wrap_sender_iv, cek_wrap_sender_salt, reply_to`
 
 	created := domain.Message{}
 
@@ -27,6 +27,7 @@ func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 		nullStr(message.CEKWrapSender),
 		nullStr(message.CEKWrapSenderIV),
 		nullStr(message.CEKWrapSenderSalt),
+		nullInt(message.ReplyTo),
 	).Scan(
 		&created.ID,
 		&created.Ciphertext,
@@ -42,6 +43,7 @@ func (r *MessageRepo) Create(message *domain.Message) (*domain.Message, error) {
 		&created.CEKWrapSender,
 		&created.CEKWrapSenderIV,
 		&created.CEKWrapSenderSalt,
+		&created.ReplyTo,
 	)
 	if err != nil {
 		return nil, err
@@ -55,4 +57,11 @@ func nullStr(s *string) interface{} {
 		return nil
 	}
 	return *s
+}
+
+func nullInt(i *int) interface{} {
+	if i == nil {
+		return nil
+	}
+	return *i
 }

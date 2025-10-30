@@ -18,4 +18,5 @@ type Message struct {
 	CEKWrapSenderIV       *string    `db:"cek_wrap_sender_iv" json:"cek_wrap_sender_iv,omitempty"`
 	CEKWrapSenderSalt     *string    `db:"cek_wrap_sender_salt" json:"cek_wrap_sender_salt,omitempty"`
 	Seen                  *time.Time `db:"seen" json:"seen,omitempty"`
+	ReplyTo               *int       `db:"reply_to" json:"reply_to,omitempty"`
 }

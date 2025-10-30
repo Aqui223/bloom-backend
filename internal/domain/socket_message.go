@@ -15,4 +15,5 @@ type SocketMessage struct {
 	CEKWrapSender         string `json:"cek_wrap_sender,omitempty"`
 	CEKWrapSenderIV       string `json:"cek_wrap_sender_iv,omitempty"`
 	CEKWrapSenderSalt     string `json:"cek_wrap_sender_salt,omitempty"`
+	ReplyTo               int    `json:"reply_to,omitempty"`
 }
