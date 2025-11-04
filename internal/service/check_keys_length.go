@@ -22,7 +22,7 @@ func CheckKeysLength(kyberPublicKey string, ecdhPublicKey string, edPublicKey st
 	if len(kyberKey) != 1184 {
 		return errors.New("invalid_kyber_key_length")
 	}
-	if len(ecdhKey) != 76 {
+	if len(ecdhKey) != 56 {
 		return errors.New("invalid_ecdh_key_length")
 	}
 	if len(edKey) != 32 && len(edKey) != 33 {
