@@ -30,6 +30,13 @@ type Config struct {
 		Threads uint8
 		KeyLen  uint32 `mapstructure:"key_len"`
 	}
+	Email struct {
+		Email        string
+		ClientId     string `mapstructure:"client_id"`
+		ClientSecret string `mapstructure:"client_secret"`
+		AccessToken  string `mapstructure:"access_token"`
+		RefreshToken string `mapstructure:"refresh_token"`
+	}
 	RateLimit struct {
 		Enabled                  bool `mapstructure:"enabled"`
 		AuthRequestsPerMinute    int  `mapstructure:"auth_requests_per_minute"`

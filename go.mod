@@ -2,7 +2,10 @@ module github.com/slipe-fun/skid-backend
 
 go 1.24.6
 
+require golang.org/x/oauth2 v0.25.0
+
 require (
+	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/fasthttp/websocket v1.5.3 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
