@@ -34,3 +34,4 @@ go.work.sum
 .DS_STORE
 
 configs/config.yaml
+main.go

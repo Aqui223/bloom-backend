@@ -37,6 +37,11 @@ type Config struct {
 		AccessToken  string `mapstructure:"access_token"`
 		RefreshToken string `mapstructure:"refresh_token"`
 	}
+	GoogleAuth struct {
+		ClientId     string `mapstructure:"client_id"`
+		ClientSecret string `mapstructure:"client_secret"`
+		RedirectURL  string `mapstructure:"redirect_url"`
+	} `mapstructure:"google_auth"`
 	RateLimit struct {
 		Enabled                  bool `mapstructure:"enabled"`
 		AuthRequestsPerMinute    int  `mapstructure:"auth_requests_per_minute"`

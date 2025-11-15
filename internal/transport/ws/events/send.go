@@ -2,7 +2,6 @@ package events
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/fasthttp/websocket"
 	"github.com/slipe-fun/skid-backend/internal/domain"
@@ -64,7 +63,6 @@ func Send(hub *types.Hub, sender *types.Client, token string, senderID int, room
 			})
 
 			if err != nil {
-				fmt.Println(err)
 				SendError(sender, "failed_send_message")
 				return
 			}

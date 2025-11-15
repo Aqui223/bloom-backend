@@ -79,7 +79,6 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 				ChatID int    `json:"chat_id"`
 			}
 			if err := json.Unmarshal(msg, &baseMsg); err != nil {
-				fmt.Println(err)
 				events.SendError(client, "invalid_message_format")
 				continue
 			}

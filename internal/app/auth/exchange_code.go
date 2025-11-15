@@ -1,0 +1,48 @@
+package AuthApp
+
+import (
+	"errors"
+
+	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service"
+)
+
+func (a *AuthApp) ExchangeCode(code string) (string, *domain.User, error) {
+	token, err := a.google.ExchangeCode(code)
+	if err != nil {
+		return "", nil, errors.New("failed to exchange code")
+	}
+
+	client, err := a.google.GetUserInfo(token)
+	if err != nil {
+		return "", nil, errors.New("failed to get user info")
+	}
+
+	email, ok := client["email"].(string)
+	if !ok {
+		return "", nil, errors.New("email not found or wrong type")
+	}
+
+	user, err := a.users.GetByEmail(email)
+	if err != nil {
+		name, ok := client["name"].(string)
+		if !ok {
+			return "", nil, errors.New("name not found or wrong type")
+		}
+
+		user, err = a.users.Create(&domain.User{
+			Email:    email,
+			Username: service.GenerateUsername(name),
+		})
+		if err != nil {
+			return "", nil, errors.New("failed to register user")
+		}
+	}
+
+	jwtToken, err := a.jwtSvc.GenerateToken(user.ID)
+	if err != nil {
+		return "", nil, errors.New("failed to generate token")
+	}
+
+	return jwtToken, user, nil
+}

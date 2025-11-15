@@ -20,6 +20,7 @@ import (
 	UserRepo "github.com/slipe-fun/skid-backend/internal/repository/user"
 	VerificationRepo "github.com/slipe-fun/skid-backend/internal/repository/verification"
 	"github.com/slipe-fun/skid-backend/internal/service"
+	"github.com/slipe-fun/skid-backend/internal/service/oauth2"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/message"
@@ -35,6 +36,12 @@ func main() {
 	db := repository.InitDB(cfg)
 	defer db.Close()
 
+	googleService := oauth2.NewGoogleAuthService(
+		cfg.GoogleAuth.ClientId,
+		cfg.GoogleAuth.ClientSecret,
+		cfg.GoogleAuth.RedirectURL,
+	)
+
 	verificationRepo := VerificationRepo.NewVerificationRepo(db)
 	userRepo := UserRepo.NewUserRepo(db, verificationRepo)
 	chatRepo := ChatRepo.NewChatRepo(db, userRepo)
@@ -44,12 +51,12 @@ func main() {
 	tokenSvc := service.NewTokenService(jwtSvc)
 
 	verificationApp := VerificationApp.NewAuthApp(verificationRepo)
-	authApp := AuthApp.NewAuthApp(userRepo, verificationRepo, verificationApp, jwtSvc)
+	authApp := AuthApp.NewAuthApp(userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
 	userApp := UserApp.NewUserApp(userRepo, jwtSvc, tokenSvc)
 	chatApp := ChatApp.NewChatApp(chatRepo, tokenSvc)
 	messageApp := MessageApp.NewMessageApp(messageRepo, chatApp, tokenSvc)
 
-	authHandler := auth.NewAuthHandler(authApp)
+	authHandler := auth.NewAuthHandler(authApp, (*oauth2.GoogleAuthService)(googleService))
 	userHandler := user.NewUserHandler(userApp)
 	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp)
 	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp)
@@ -75,6 +82,7 @@ func main() {
 
 	fiberApp.Post("/auth/verify-code", authHandler.VerifyCode)
 	fiberApp.Post("/auth/request-code", authHandler.RequestCode)
+	fiberApp.Get("/oauth2/google/exchange-code", authHandler.ExchangeCode)
 	fiberApp.Post("/auth/register", authHandler.Register)
 
 	fiberApp.Get("/user/me", userHandler.GetUser)
