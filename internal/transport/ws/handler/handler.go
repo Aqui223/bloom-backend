@@ -18,13 +18,8 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 	return func(c *websocket.Conn) {
 		defer c.Close()
 		clientToken := c.Query("token")
-		_, err := hub.JwtSvc.VerifyToken(clientToken)
-		if err != nil {
-			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
-			return
-		}
 
-		userID, err := hub.TokenSvc.ExtractUserID(clientToken)
+		session, err := hub.SessionApp.GetSession(clientToken)
 		if err != nil {
 			c.WriteMessage(websocket.TextMessage, []byte("Unauthorized"))
 			return
@@ -35,7 +30,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 		if hub.ClientsByUserID == nil {
 			hub.ClientsByUserID = make(map[int]*types.Client)
 		}
-		hub.ClientsByUserID[userID] = client
+		hub.ClientsByUserID[session.UserID] = client
 
 		chats, err := hub.Chats.GetChatsByUserId(clientToken)
 		if err != nil {
@@ -97,14 +92,14 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					events.SendError(client, "not_member")
 					continue
 				}
-				events.Send(hub, client, clientToken, userID, room, socketMsg)
+				events.Send(hub, client, clientToken, session.UserID, room, socketMsg)
 			case "add_keys":
 				var socketKeys domain.SocketKeys
 				if err := json.Unmarshal(msg, &socketKeys); err != nil {
 					events.SendError(client, "invalid_message_format")
 					continue
 				}
-				events.AddChatKeys(hub, client, clientToken, userID, socketKeys)
+				events.AddChatKeys(hub, client, clientToken, session.UserID, socketKeys)
 			case "create_chat":
 				var socketChat domain.SocketChat
 				if err := json.Unmarshal(msg, &socketChat); err != nil {
@@ -112,7 +107,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					continue
 				}
 
-				events.CreateChat(hub, client, clientToken, userID, socketChat)
+				events.CreateChat(hub, client, clientToken, session.UserID, socketChat)
 
 				chats, _ = hub.Chats.GetChatsByUserId(clientToken)
 			case "message_seen":
@@ -127,7 +122,7 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					events.SendError(client, "not_member")
 					continue
 				}
-				events.MessageSeen(hub, client, clientToken, userID, room, seenMsg)
+				events.MessageSeen(hub, client, clientToken, session.UserID, room, seenMsg)
 
 			default:
 				log.Println("Unknown message type:", baseMsg.Type)
