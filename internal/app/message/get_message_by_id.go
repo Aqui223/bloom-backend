@@ -5,7 +5,7 @@ import (
 )
 
 func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.MessageWithReply, error) {
-	_, err := c.tokenSvc.ExtractUserID(tokenStr)
+	_, err := c.sessionApp.GetSession(tokenStr)
 	if err != nil {
 		return nil, err
 	}

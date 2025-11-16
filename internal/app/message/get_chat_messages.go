@@ -5,7 +5,7 @@ import (
 )
 
 func (c *MessageApp) GetChatMessages(tokenStr string, chatId int) ([]*domain.MessageWithReply, error) {
-	_, err := c.tokenSvc.ExtractUserID(tokenStr)
+	_, err := c.sessionApp.GetSession(tokenStr)
 	if err != nil {
 		return nil, err
 	}
