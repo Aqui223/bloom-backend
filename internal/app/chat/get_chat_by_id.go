@@ -7,7 +7,7 @@ import (
 )
 
 func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
-	userID, err := c.tokenSvc.ExtractUserID(tokenStr)
+	session, err := c.sessionApp.GetSession(tokenStr)
 
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
 		return nil, err
 	}
 
-	if !c.HasMember(chat, userID) {
+	if !c.HasMember(chat, session.UserID) {
 		return nil, errors.New("user is not in chat")
 	}
 

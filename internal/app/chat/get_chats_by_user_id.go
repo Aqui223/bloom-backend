@@ -5,12 +5,12 @@ import (
 )
 
 func (c *ChatApp) GetChatsByUserId(tokenStr string) ([]*domain.Chat, error) {
-	userID, err := c.tokenSvc.ExtractUserID(tokenStr)
+	session, err := c.sessionApp.GetSession(tokenStr)
 	if err != nil {
 		return nil, err
 	}
 
-	chats, err := c.chats.GetByUserId(userID)
+	chats, err := c.chats.GetByUserId(session.UserID)
 
 	if err != nil {
 		return nil, err

@@ -57,7 +57,7 @@ func main() {
 	verificationApp := VerificationApp.NewAuthApp(verificationRepo)
 	authApp := AuthApp.NewAuthApp(sessionApp, userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
 	userApp := UserApp.NewUserApp(sessionApp, userRepo, jwtSvc, tokenSvc)
-	chatApp := ChatApp.NewChatApp(chatRepo, tokenSvc)
+	chatApp := ChatApp.NewChatApp(sessionApp, chatRepo, tokenSvc)
 	messageApp := MessageApp.NewMessageApp(messageRepo, chatApp, tokenSvc)
 
 	authHandler := auth.NewAuthHandler(authApp, (*oauth2.GoogleAuthService)(googleService))

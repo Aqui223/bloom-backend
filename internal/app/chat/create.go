@@ -6,7 +6,7 @@ import (
 )
 
 func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, error) {
-	userID, err := c.tokenSvc.ExtractUserID(tokenStr)
+	session, err := c.sessionApp.GetSession(tokenStr)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, erro
 	chat, err := c.chats.Create(&domain.Chat{
 		Members: []domain.Member{
 			{
-				ID:             userID,
+				ID:             session.UserID,
 				KyberPublicKey: "",
 				EcdhPublicKey:  "",
 				EdPublicKey:    "",
