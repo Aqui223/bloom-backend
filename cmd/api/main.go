@@ -11,12 +11,14 @@ import (
 	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
 	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
+	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"
 	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
 	VerificationApp "github.com/slipe-fun/skid-backend/internal/app/verification"
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	ChatRepo "github.com/slipe-fun/skid-backend/internal/repository/chat"
 	MessageRepo "github.com/slipe-fun/skid-backend/internal/repository/message"
+	SessionRepo "github.com/slipe-fun/skid-backend/internal/repository/session"
 	UserRepo "github.com/slipe-fun/skid-backend/internal/repository/user"
 	VerificationRepo "github.com/slipe-fun/skid-backend/internal/repository/verification"
 	"github.com/slipe-fun/skid-backend/internal/service"
@@ -46,12 +48,14 @@ func main() {
 	userRepo := UserRepo.NewUserRepo(db, verificationRepo)
 	chatRepo := ChatRepo.NewChatRepo(db, userRepo)
 	messageRepo := MessageRepo.NewMessageRepo(db)
+	sessionRepo := SessionRepo.NewSessionRepo(db, userRepo)
 
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
 	tokenSvc := service.NewTokenService(jwtSvc)
 
+	sessionApp := SessionApp.NewSessionApp(sessionRepo, userRepo, jwtSvc, tokenSvc)
 	verificationApp := VerificationApp.NewAuthApp(verificationRepo)
-	authApp := AuthApp.NewAuthApp(userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
+	authApp := AuthApp.NewAuthApp(sessionApp, userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
 	userApp := UserApp.NewUserApp(userRepo, jwtSvc, tokenSvc)
 	chatApp := ChatApp.NewChatApp(chatRepo, tokenSvc)
 	messageApp := MessageApp.NewMessageApp(messageRepo, chatApp, tokenSvc)

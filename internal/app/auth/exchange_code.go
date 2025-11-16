@@ -39,7 +39,7 @@ func (a *AuthApp) ExchangeCode(code string) (string, *domain.User, error) {
 		}
 	}
 
-	jwtToken, err := a.jwtSvc.GenerateToken(user.ID)
+	jwtToken, err := a.sessionApp.CreateSession(user.ID)
 	if err != nil {
 		return "", nil, errors.New("failed to generate token")
 	}

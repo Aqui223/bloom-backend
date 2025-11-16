@@ -25,7 +25,7 @@ func (a *AuthApp) VerifyCode(email string, code string) (string, *domain.User, e
 		return "", nil, errors.New("code has expired")
 	}
 
-	token, err := a.jwtSvc.GenerateToken(user.ID)
+	token, err := a.sessionApp.CreateSession(user.ID)
 	if err != nil {
 		return "", nil, err
 	}
