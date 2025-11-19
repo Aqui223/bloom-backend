@@ -45,7 +45,7 @@ func (h *UserHandler) EditUser(c *fiber.Ctx) error {
 	}
 
 	if req.DisplayName != nil {
-		newUser.DisplayName = *req.DisplayName
+		newUser.DisplayName = req.DisplayName
 	} else {
 		newUser.DisplayName = user.DisplayName
 	}

@@ -42,7 +42,7 @@ func (u *UserApp) EditUser(token string, editedUser *domain.User) (*domain.User,
 		user.Username = editedUser.Username
 	}
 
-	if len(editedUser.DisplayName) > 0 && len(editedUser.DisplayName) <= 20 {
+	if editedUser.DisplayName != nil && len(*editedUser.DisplayName) > 0 && len(*editedUser.DisplayName) <= 20 {
 		user.DisplayName = editedUser.DisplayName
 	} else {
 		return nil, errors.New("wrong length of display name")

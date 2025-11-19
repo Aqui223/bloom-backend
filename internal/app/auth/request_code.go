@@ -26,7 +26,7 @@ func (a *AuthApp) RequestCode(email string) error {
 		}
 	}
 
-	createAndSendCodeError := a.codesApp.CreateAndSendCode(user.Email)
+	createAndSendCodeError := a.codesApp.CreateAndSendCode(*user.Email)
 
 	if createAndSendCodeError != nil {
 		return createAndSendCodeError

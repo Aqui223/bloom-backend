@@ -15,8 +15,8 @@ func (a *AuthApp) Register(email string) error {
 	}
 
 	user, err := a.users.Create(&domain.User{
-		Email:       email,
-		DisplayName: service.GenerateNickname(),
+		Email:       service.Strptr(email),
+		DisplayName: service.Strptr(service.GenerateNickname()),
 		Username:    "",
 	})
 
@@ -24,7 +24,7 @@ func (a *AuthApp) Register(email string) error {
 		return err
 	}
 
-	createAndSendCodeError := a.codesApp.CreateAndSendCode(user.Email)
+	createAndSendCodeError := a.codesApp.CreateAndSendCode(*user.Email)
 
 	if createAndSendCodeError != nil {
 		return createAndSendCodeError

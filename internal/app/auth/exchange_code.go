@@ -32,9 +32,9 @@ func (a *AuthApp) ExchangeCode(code string) (string, *domain.User, error) {
 		}
 
 		user, err = a.users.Create(&domain.User{
-			Email:       email,
+			Email:       service.Strptr(email),
 			Username:    service.GenerateUsername(name),
-			DisplayName: service.GenerateNickname(),
+			DisplayName: service.Strptr(service.GenerateNickname()),
 		})
 		if err != nil {
 			return "", nil, errors.New("failed to register user")
