@@ -94,6 +94,7 @@ func main() {
 	fiberApp.Get("/user/me", userHandler.GetUser)
 	fiberApp.Post("/user/edit", userHandler.EditUser)
 	fiberApp.Get("/user/search", userHandler.SearchByUsername)
+	fiberApp.Get("/user/exists", userHandler.IsUserWithEmailExists)
 	fiberApp.Get("/user/:id", userHandler.GetUserById)
 
 	fiberApp.Post("/chat/create", chatHandler.CreateChat)
