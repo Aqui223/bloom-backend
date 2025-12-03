@@ -2,6 +2,7 @@ package KeysApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (k *KeysApp) GetUserChatsKeys(tokenStr string) (*domain.EncryptedKeys, error) {
@@ -12,6 +13,7 @@ func (k *KeysApp) GetUserChatsKeys(tokenStr string) (*domain.EncryptedKeys, erro
 
 	keys, err := k.keys.GetByUserId(session.UserID)
 	if err != nil {
+		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.Failed("failed to get keys")
 	}
 

@@ -2,6 +2,7 @@ package UserApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (u *UserApp) GetUserByToken(tokenStr string) (*domain.User, error) {
@@ -12,6 +13,7 @@ func (u *UserApp) GetUserByToken(tokenStr string) (*domain.User, error) {
 
 	user, err := u.users.GetById(session.UserID)
 	if err != nil {
+		logger.LogError(err.Error(), "user-app")
 		return nil, domain.Failed("failed to get user")
 	}
 

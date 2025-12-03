@@ -24,6 +24,7 @@ import (
 	UserRepo "github.com/slipe-fun/skid-backend/internal/repository/user"
 	VerificationRepo "github.com/slipe-fun/skid-backend/internal/repository/verification"
 	"github.com/slipe-fun/skid-backend/internal/service"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 	"github.com/slipe-fun/skid-backend/internal/service/oauth2"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
@@ -41,6 +42,10 @@ func main() {
 
 	db := repository.InitDB(cfg)
 	defer db.Close()
+
+	if err := logger.Init("logs/app.log"); err != nil {
+		panic(err)
+	}
 
 	googleService := oauth2.NewGoogleAuthService(
 		cfg.GoogleAuth.ClientId,

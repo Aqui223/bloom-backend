@@ -4,17 +4,20 @@ import (
 	"time"
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (a *AuthApp) VerifyCode(email string, code string) (string, *domain.User, error) {
 	user, err := a.users.GetByEmail(email)
 
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.NotFound("code not found")
 	}
 
 	verificationCode, err := a.codesRepo.GetByEmailAndCode(email, code)
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.NotFound("code not found")
 	}
 
@@ -31,6 +34,7 @@ func (a *AuthApp) VerifyCode(email string, code string) (string, *domain.User, e
 
 	err = a.codesRepo.DeleteByEmailAndCode(email, code)
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.Failed("failed to delete old code")
 	}
 

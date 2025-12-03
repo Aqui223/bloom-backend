@@ -6,6 +6,7 @@ import (
 
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (u *UserApp) EditUser(token string, editedUser *domain.User) (*domain.User, error) {
@@ -16,6 +17,7 @@ func (u *UserApp) EditUser(token string, editedUser *domain.User) (*domain.User,
 
 	user, err := u.users.GetById(editedUser.ID)
 	if err != nil {
+		logger.LogError(err.Error(), "user-app")
 		return nil, domain.Failed("failed to get user")
 	}
 
@@ -32,10 +34,12 @@ func (u *UserApp) EditUser(token string, editedUser *domain.User) (*domain.User,
 
 		existing, err := u.users.GetByUsername(editedUser.Username)
 		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			logger.LogError(err.Error(), "user-app")
 			return nil, err
 		}
 
 		if existing != nil && existing.ID != editedUser.ID {
+			logger.LogError(err.Error(), "user-app")
 			return nil, domain.AlreadyExists("user with this username already exists")
 		}
 
@@ -50,6 +54,7 @@ func (u *UserApp) EditUser(token string, editedUser *domain.User) (*domain.User,
 
 	editUserErr := u.users.Edit(user)
 	if editUserErr != nil {
+		logger.LogError(editUserErr.Error(), "user-app")
 		return nil, domain.Failed("failed to edit user")
 	}
 

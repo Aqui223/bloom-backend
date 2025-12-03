@@ -2,6 +2,7 @@ package MessageApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.MessageWithReply, error) {
@@ -12,12 +13,13 @@ func (c *MessageApp) GetMessageById(tokenStr string, id int) (*domain.MessageWit
 
 	message, err := c.messages.GetById(id)
 	if err != nil {
+		logger.LogError(err.Error(), "message-app")
 		return nil, domain.NotFound("message not found")
 	}
 
 	_, chaterr := c.chats.GetChatById(tokenStr, message.ChatID)
 	if chaterr != nil {
-		return nil, domain.NotFound("message not found")
+		return nil, chaterr
 	}
 
 	result := &domain.MessageWithReply{

@@ -5,11 +5,13 @@ import (
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (v *VerificationApp) CreateAndSendCode(email string) error {
 	code, err := service.GenerateNumericCode(6)
 	if err != nil {
+		logger.LogError(err.Error(), "verification-app")
 		return domain.Failed("failed to generate numeric code")
 	}
 
@@ -18,6 +20,7 @@ func (v *VerificationApp) CreateAndSendCode(email string) error {
 		Code:  code,
 	})
 	if err != nil {
+		logger.LogError(err.Error(), "verification-app")
 		return domain.Failed("failed to create code")
 	}
 
@@ -27,6 +30,7 @@ func (v *VerificationApp) CreateAndSendCode(email string) error {
 		email,
 	)
 	if sendEmailError != nil {
+		logger.LogError(sendEmailError.Error(), "verification-app")
 		v.verification.DeleteByEmailAndCode(email, createdCode.Code)
 		return domain.Failed("failed to send email")
 	}

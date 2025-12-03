@@ -2,7 +2,6 @@ package ChatRepo
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
 )
@@ -20,7 +19,7 @@ func (r *ChatRepo) UpdateChat(chat *domain.Chat) error {
     `, membersJSON, chat.ID)
 
 	if err != nil {
-		return fmt.Errorf("failed to update chat: %w", err)
+		return err
 	}
 
 	return nil

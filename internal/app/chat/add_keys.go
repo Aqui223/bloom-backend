@@ -1,6 +1,9 @@
 package ChatApp
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
+)
 
 func (c *ChatApp) AddKeys(tokenStr string, chat *domain.Chat, kyberPublicKey string, ecdhPublicKey string, edPublicKey string) error {
 	session, err := c.sessionApp.GetSession(tokenStr)
@@ -18,6 +21,7 @@ func (c *ChatApp) AddKeys(tokenStr string, chat *domain.Chat, kyberPublicKey str
 
 	updateChatError := c.chats.UpdateChat(chat)
 	if updateChatError != nil {
+		logger.LogError(updateChatError.Error(), "chat-app")
 		return domain.Failed("failed to update chat keys")
 	}
 

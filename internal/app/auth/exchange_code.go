@@ -6,16 +6,19 @@ import (
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (a *AuthApp) ExchangeCode(code string) (string, *domain.User, error) {
 	token, err := a.google.ExchangeCode(code)
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.Failed("failed to exchange code")
 	}
 
 	client, err := a.google.GetUserInfo(token)
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.Failed("failed to get user info")
 	}
 
@@ -37,9 +40,11 @@ func (a *AuthApp) ExchangeCode(code string) (string, *domain.User, error) {
 			DisplayName: service.Strptr(service.GenerateNickname()),
 		})
 		if err != nil {
+			logger.LogError(err.Error(), "auth-app")
 			return "", nil, domain.Failed("failed to register user")
 		}
 	} else if !errors.Is(err, sql.ErrNoRows) && err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return "", nil, domain.Failed("failed to get user")
 	}
 

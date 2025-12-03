@@ -2,6 +2,7 @@ package ChatApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
@@ -14,6 +15,7 @@ func (c *ChatApp) GetChatById(tokenStr string, id int) (*domain.Chat, error) {
 	chat, err := c.chats.GetById(id)
 
 	if err != nil {
+		logger.LogError(err.Error(), "chat-app")
 		return nil, domain.NotFound("chat not found")
 	}
 

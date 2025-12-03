@@ -3,6 +3,7 @@ package ChatApp
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service/crypto"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, error) {
@@ -13,6 +14,7 @@ func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, erro
 
 	encryptionKey, err := crypto.GenerateEncryptionKey()
 	if err != nil {
+		logger.LogError(err.Error(), "chat-app")
 		return nil, domain.Failed("failed to generate encryption key")
 	}
 
@@ -36,6 +38,7 @@ func (c *ChatApp) CreateChat(tokenStr string, recipient int) (*domain.Chat, erro
 	})
 
 	if err != nil {
+		logger.LogError(err.Error(), "chat-app")
 		return nil, domain.Failed("failed to create chat")
 	}
 

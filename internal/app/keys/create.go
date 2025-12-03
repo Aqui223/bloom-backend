@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (k *KeysApp) CreateKeys(tokenStr string, keys *domain.EncryptedKeys) (*domain.EncryptedKeys, error) {
@@ -14,16 +15,19 @@ func (k *KeysApp) CreateKeys(tokenStr string, keys *domain.EncryptedKeys) (*doma
 
 	ciphertextBytes, err := base64.StdEncoding.DecodeString(keys.Ciphertext)
 	if err != nil || len(ciphertextBytes) < 3393 {
+		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.InvalidData("invalid ciphertext")
 	}
 
 	nonceBytes, err := base64.StdEncoding.DecodeString(keys.Nonce)
 	if err != nil || len(nonceBytes) != 12 {
+		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.InvalidData("invalid nonce")
 	}
 
 	saltBytes, err := base64.StdEncoding.DecodeString(keys.Salt)
 	if err != nil || len(saltBytes) != 16 {
+		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.InvalidData("invalid salt")
 	}
 
@@ -35,6 +39,7 @@ func (k *KeysApp) CreateKeys(tokenStr string, keys *domain.EncryptedKeys) (*doma
 
 		err = k.keys.Edit(existingKeys)
 		if err != nil {
+			logger.LogError(err.Error(), "keys-app")
 			return nil, domain.Failed("failed to save keys")
 		}
 		return existingKeys, nil
@@ -47,6 +52,7 @@ func (k *KeysApp) CreateKeys(tokenStr string, keys *domain.EncryptedKeys) (*doma
 		Salt:       keys.Salt,
 	})
 	if err != nil {
+		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.Failed("failed to save keys")
 	}
 

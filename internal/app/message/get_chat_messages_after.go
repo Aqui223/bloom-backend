@@ -2,6 +2,7 @@ package MessageApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (c *MessageApp) GetChatMessagesAfter(tokenStr string, chatId int, afterId int) ([]*domain.MessageWithReply, error) {
@@ -17,6 +18,7 @@ func (c *MessageApp) GetChatMessagesAfter(tokenStr string, chatId int, afterId i
 
 	messages, err := c.messages.GetChatMessagesAfter(chat.ID, afterId)
 	if err != nil {
+		logger.LogError(err.Error(), "message-app")
 		return nil, domain.NotFound("messages not found")
 	}
 

@@ -1,6 +1,9 @@
 package ChatApp
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
+)
 
 func (c *ChatApp) GetChatWithUsers(tokenStr string, recipient int) (*domain.Chat, error) {
 	session, err := c.sessionApp.GetSession(tokenStr)
@@ -11,6 +14,7 @@ func (c *ChatApp) GetChatWithUsers(tokenStr string, recipient int) (*domain.Chat
 	chat, err := c.chats.GetWithUsers(session.UserID, recipient)
 
 	if err != nil {
+		logger.LogError(err.Error(), "chat-app")
 		return nil, domain.NotExpired("chats not found")
 	}
 

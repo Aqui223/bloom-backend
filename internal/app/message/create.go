@@ -2,6 +2,7 @@ package MessageApp
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (c *MessageApp) CreateMessage(tokenStr string, chatId int, message *domain.Message) (*domain.Message, error) {
@@ -17,6 +18,7 @@ func (c *MessageApp) CreateMessage(tokenStr string, chatId int, message *domain.
 
 	message, messageErr := c.messages.Create(message)
 	if messageErr != nil {
+		logger.LogError(messageErr.Error(), "message-app")
 		return nil, domain.Failed("failed to create message")
 	}
 

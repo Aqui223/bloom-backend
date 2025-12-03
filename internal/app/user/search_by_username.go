@@ -1,10 +1,14 @@
 package UserApp
 
-import "github.com/slipe-fun/skid-backend/internal/domain"
+import (
+	"github.com/slipe-fun/skid-backend/internal/domain"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
+)
 
 func (u *UserApp) SearchUsersByUsername(username string, limit, offset int) ([]*domain.User, error) {
 	users, err := u.users.SearchUsersByUsername(username, limit, offset)
 	if err != nil {
+		logger.LogError(err.Error(), "user-app")
 		return nil, domain.NotFound("users not found")
 	}
 

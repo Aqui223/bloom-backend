@@ -3,6 +3,7 @@ package AuthApp
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service"
+	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
 func (a *AuthApp) Register(email string) error {
@@ -19,6 +20,7 @@ func (a *AuthApp) Register(email string) error {
 	})
 
 	if err != nil {
+		logger.LogError(err.Error(), "auth-app")
 		return domain.Failed("failed to register user")
 	}
 
