@@ -24,7 +24,9 @@ func (r *MessageRepo) GetChatMessagesBefore(chatId, afterId, count int) ([]*doma
 		COALESCE(cek_wrap_sender_salt, '') AS cek_wrap_sender_salt,
 		COALESCE(reply_to, 0) AS reply_to
 	FROM messages
-	WHERE chat_id = $1 AND id < $2 LIMIT $3
+	WHERE chat_id = $1 AND id < $2 
+	ORDER BY id DESC
+	LIMIT $3
 	`, chatId, afterId, count)
 
 	if err != nil {
