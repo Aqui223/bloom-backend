@@ -77,7 +77,7 @@ func main() {
 	friendApp := FriendApp.NewFriendApp(sessionApp, friendRepo, userRepo, tokenSvc)
 
 	authHandler := auth.NewAuthHandler(authApp, (*oauth2.GoogleAuthService)(googleService))
-	userHandler := user.NewUserHandler(userApp)
+	userHandler := user.NewUserHandler(userApp, friendApp)
 	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp)
 	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp)
 	sessionHandler := session.NewSessionHandler(sessionApp)
