@@ -12,10 +12,10 @@ func (r *FriendRepo) GetFriends(userID int, status string, limit, offset int) ([
 				status
 			FROM friends
 			WHERE
-				status = 'accepted'
+				status = $2
 				AND (user_id = $1 OR friend_id = $1)
 			ORDER BY id
-			LIMIT $2 OFFSET $3;
+			LIMIT $3 OFFSET $4;
 			`
 
 	var friends []domain.Friend
