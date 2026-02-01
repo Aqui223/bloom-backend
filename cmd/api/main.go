@@ -117,6 +117,7 @@ func main() {
 
 	fiberApp.Get("/friends/:status", friendHandler.GetFriends)
 	fiberApp.Post("/friend/request", friendHandler.SendRequest)
+	fiberApp.Post("/friend/delete", friendHandler.DeleteFriend)
 
 	fiberApp.Post("/chat/create", chatHandler.CreateChat)
 	fiberApp.Get("/chats", chatHandler.GetChatsByUserId)
