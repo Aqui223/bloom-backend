@@ -10,6 +10,7 @@ import (
 
 	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	FriendApp "github.com/slipe-fun/skid-backend/internal/app/friend"
 	KeysApp "github.com/slipe-fun/skid-backend/internal/app/keys"
 	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"
@@ -18,6 +19,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	ChatRepo "github.com/slipe-fun/skid-backend/internal/repository/chat"
+	FriendRepo "github.com/slipe-fun/skid-backend/internal/repository/friend"
 	KeysRepo "github.com/slipe-fun/skid-backend/internal/repository/keys"
 	MessageRepo "github.com/slipe-fun/skid-backend/internal/repository/message"
 	SessionRepo "github.com/slipe-fun/skid-backend/internal/repository/session"
@@ -28,6 +30,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/service/oauth2"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/auth"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/chat"
+	"github.com/slipe-fun/skid-backend/internal/transport/http/friend"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/keys"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/message"
 	"github.com/slipe-fun/skid-backend/internal/transport/http/middleware"
@@ -59,6 +62,7 @@ func main() {
 	messageRepo := MessageRepo.NewMessageRepo(db)
 	sessionRepo := SessionRepo.NewSessionRepo(db, userRepo)
 	keysRepo := KeysRepo.NewKeysRepo(db, chatRepo)
+	friendRepo := FriendRepo.NewFriendRepo(db)
 
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
 	tokenSvc := service.NewTokenService(jwtSvc)
@@ -70,6 +74,7 @@ func main() {
 	chatApp := ChatApp.NewChatApp(sessionApp, chatRepo, tokenSvc)
 	messageApp := MessageApp.NewMessageApp(sessionApp, messageRepo, chatApp, tokenSvc)
 	keysApp := KeysApp.NewKeysApp(sessionApp, keysRepo, userApp, chatApp)
+	friendApp := FriendApp.NewFriendApp(sessionApp, friendRepo, userRepo, tokenSvc)
 
 	authHandler := auth.NewAuthHandler(authApp, (*oauth2.GoogleAuthService)(googleService))
 	userHandler := user.NewUserHandler(userApp)
@@ -77,6 +82,7 @@ func main() {
 	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp)
 	sessionHandler := session.NewSessionHandler(sessionApp)
 	keysHandler := keys.NewKeysHandler(keysApp, chatApp)
+	friendHandler := friend.NewFriendHandler(friendApp)
 
 	fiberApp := fiber.New()
 
