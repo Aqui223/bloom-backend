@@ -2,7 +2,7 @@ package MessageRepo
 
 import "github.com/slipe-fun/skid-backend/internal/domain"
 
-func (r *MessageRepo) GetChatLastSeenMessage(chatID int) (*domain.Message, error) {
+func (r *MessageRepo) GetChatLastReadMessage(chatID int) (*domain.Message, error) {
 	var message domain.Message
 
 	query := `SELECT 
@@ -22,7 +22,7 @@ func (r *MessageRepo) GetChatLastSeenMessage(chatID int) (*domain.Message, error
 		COALESCE(cek_wrap_sender_iv, '') AS cek_wrap_sender_iv,
 		COALESCE(cek_wrap_sender_salt, '') AS cek_wrap_sender_salt,
 		COALESCE(reply_to, 0) AS reply_to
-	FROM messages WHERE chat_id = $1 AND seen = TRUE
+	FROM messages WHERE chat_id = $1 AND seen IS NOT NULL
 	ORDER BY id DESC
 	LIMIT 1`
 	err := r.db.Get(&message, query, chatID)

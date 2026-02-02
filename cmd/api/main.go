@@ -122,6 +122,7 @@ func main() {
 	fiberApp.Post("/chat/create", chatHandler.CreateChat)
 	fiberApp.Get("/chats", chatHandler.GetChatsByUserId)
 	fiberApp.Get("/chat/:id", chatHandler.GetChatById)
+	fiberApp.Get("/chat/:id/read", chatHandler.GetChatLastReadMessage)
 	fiberApp.Get("/chat/:id/messages", chatHandler.GetChatMessages)
 	fiberApp.Get("/chat/:c_id/messages/after/:m_id", chatHandler.GetChatMessagesAfter)
 	fiberApp.Get("/chat/:c_id/messages/before/:m_id", chatHandler.GetChatMessagesBefore)
