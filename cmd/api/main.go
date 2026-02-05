@@ -135,6 +135,7 @@ func main() {
 
 	fiberApp.Get("/message/:id", messageHandler.GetMessageById)
 	fiberApp.Post("/message/send", messageHandler.Send)
+	fiberApp.Post("/message/seen", messageHandler.Seen)
 
 	fiberApp.Get("/sessions", sessionHandler.GetUserSessions)
 	fiberApp.Get("/session", sessionHandler.GetSessionByToken)

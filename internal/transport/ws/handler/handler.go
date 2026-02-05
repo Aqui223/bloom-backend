@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofiber/websocket/v2"
 	"github.com/slipe-fun/skid-backend/internal/domain"
-	"github.com/slipe-fun/skid-backend/internal/service"
 	"github.com/slipe-fun/skid-backend/internal/transport/ws/events"
 	"github.com/slipe-fun/skid-backend/internal/transport/ws/types"
 )
@@ -100,19 +99,6 @@ func HandleWS(hub *types.Hub) func(c *websocket.Conn) {
 					continue
 				}
 				events.AddChatKeys(hub, client, clientToken, session.UserID, socketKeys)
-			case "message_seen":
-				var seenMsg domain.SocketMessageSeen
-				if err := json.Unmarshal(msg, &seenMsg); err != nil {
-					events.SendError(client, "invalid_message_format")
-					continue
-				}
-
-				room := "chat" + strconv.Itoa(seenMsg.ChatID)
-				if !service.IsUserInChat(chats, seenMsg.ChatID) {
-					events.SendError(client, "not_member")
-					continue
-				}
-				events.MessageSeen(hub, client, clientToken, session.UserID, room, seenMsg)
 
 			default:
 				log.Println("Unknown message type:", baseMsg.Type)
