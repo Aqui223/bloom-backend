@@ -1,6 +1,8 @@
 package chat
 
 import (
+	"encoding/json"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/transport/http"
@@ -41,15 +43,15 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 		})
 	}
 
-	chat1, err := h.chatApp.GetChatWithUsers(token, req.Recipient)
-	if chat1 != nil || err == nil {
+	chat, err := h.chatApp.GetChatWithUsers(token, req.Recipient)
+	if chat != nil || err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"error":   "already_exists",
 			"message": "chat with users already exists",
 		})
 	}
 
-	chat, err := h.chatApp.CreateChat(token, user.ID)
+	chat, session, err := h.chatApp.CreateChat(token, user.ID)
 	if appErr, ok := err.(*domain.AppError); ok {
 		return c.Status(appErr.Status).JSON(fiber.Map{
 			"error":   appErr.Code,
@@ -57,9 +59,25 @@ func (h *ChatHandler) CreateChat(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"id":             chat.ID,
-		"members":        chat.Members,
-		"encryption_key": chat.EncryptionKey,
-	})
+	outMsg := struct {
+		Type   string `json:"type"`
+		UserID int    `json:"user_id"`
+		*domain.Chat
+	}{
+		Type:   "chat.new",
+		UserID: session.UserID,
+		Chat:   chat,
+	}
+
+	b, err := json.Marshal(outMsg)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "internal_error",
+			"message": "internal error",
+		})
+	}
+
+	h.wsHub.SendToUser(user.ID, b)
+
+	return c.JSON(chat)
 }

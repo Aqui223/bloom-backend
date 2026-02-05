@@ -100,7 +100,7 @@ func (h *MessageHandler) Send(c *fiber.Ctx) error {
 		ReplyTo        *domain.Message `json:"reply_to,omitempty"`
 		*domain.MessageWithReply
 	}{
-		Type:             "message",
+		Type:             "message.new",
 		EncryptionType:   "client",
 		ID:               message.ID,
 		UserID:           session.UserID,

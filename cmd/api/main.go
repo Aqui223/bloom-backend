@@ -80,7 +80,7 @@ func main() {
 
 	authHandler := auth.NewAuthHandler(authApp, (*oauth2.GoogleAuthService)(googleService))
 	userHandler := user.NewUserHandler(userApp, friendApp)
-	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp)
+	chatHandler := chat.NewChatHandler(chatApp, userApp, messageApp, hub)
 	messageHandler := message.NewMessageHandler(chatApp, userApp, messageApp, hub)
 	sessionHandler := session.NewSessionHandler(sessionApp)
 	keysHandler := keys.NewKeysHandler(keysApp, chatApp)
