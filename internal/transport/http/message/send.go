@@ -101,7 +101,7 @@ func (h *MessageHandler) Send(c *fiber.Ctx) error {
 		*domain.MessageWithReply
 	}{
 		Type:             "message.new",
-		EncryptionType:   "client",
+		EncryptionType:   req.Type,
 		ID:               message.ID,
 		UserID:           session.UserID,
 		ReplyTo:          message.ReplyToMessage,
