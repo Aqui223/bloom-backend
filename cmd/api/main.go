@@ -8,14 +8,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 
-	AuthApp "github.com/slipe-fun/skid-backend/internal/app/auth"
-	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
-	FriendApp "github.com/slipe-fun/skid-backend/internal/app/friend"
-	KeysApp "github.com/slipe-fun/skid-backend/internal/app/keys"
-	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
-	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"
-	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
-	VerificationApp "github.com/slipe-fun/skid-backend/internal/app/verification"
+	authapp "github.com/slipe-fun/skid-backend/internal/app/auth"
+	chatapp "github.com/slipe-fun/skid-backend/internal/app/chat"
+	friendapp "github.com/slipe-fun/skid-backend/internal/app/friend"
+	keysapp "github.com/slipe-fun/skid-backend/internal/app/keys"
+	messageapp "github.com/slipe-fun/skid-backend/internal/app/message"
+	sessionapp "github.com/slipe-fun/skid-backend/internal/app/session"
+	userapp "github.com/slipe-fun/skid-backend/internal/app/user"
+	verificationapp "github.com/slipe-fun/skid-backend/internal/app/verification"
 	"github.com/slipe-fun/skid-backend/internal/config"
 	"github.com/slipe-fun/skid-backend/internal/repository"
 	ChatRepo "github.com/slipe-fun/skid-backend/internal/repository/chat"
@@ -67,14 +67,14 @@ func main() {
 	jwtSvc := service.NewJWTService(cfg.JWT.Secret)
 	tokenSvc := service.NewTokenService(jwtSvc)
 
-	sessionApp := SessionApp.NewSessionApp(sessionRepo, userRepo, jwtSvc, tokenSvc)
-	verificationApp := VerificationApp.NewAuthApp(verificationRepo)
-	authApp := AuthApp.NewAuthApp(sessionApp, userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
-	userApp := UserApp.NewUserApp(sessionApp, userRepo, jwtSvc, tokenSvc)
-	chatApp := ChatApp.NewChatApp(sessionApp, chatRepo, tokenSvc)
-	messageApp := MessageApp.NewMessageApp(sessionApp, messageRepo, chatApp, tokenSvc)
-	keysApp := KeysApp.NewKeysApp(sessionApp, keysRepo, userApp, chatApp)
-	friendApp := FriendApp.NewFriendApp(sessionApp, friendRepo, userRepo, tokenSvc)
+	sessionApp := sessionapp.NewSessionApp(sessionRepo, userRepo, jwtSvc, tokenSvc)
+	verificationApp := verificationapp.NewAuthApp(verificationRepo)
+	authApp := authapp.NewAuthApp(sessionApp, userRepo, verificationRepo, verificationApp, jwtSvc, googleService)
+	userApp := userapp.NewUserApp(sessionApp, userRepo, jwtSvc, tokenSvc)
+	chatApp := chatapp.NewChatApp(sessionApp, chatRepo, tokenSvc)
+	messageApp := messageapp.NewMessageApp(sessionApp, messageRepo, chatApp, tokenSvc)
+	keysApp := keysapp.NewKeysApp(sessionApp, keysRepo, userApp, chatApp)
+	friendApp := friendapp.NewFriendApp(sessionApp, friendRepo, userRepo, tokenSvc)
 
 	hub := types.NewHub(sessionApp, chatApp, messageApp, userApp, jwtSvc, tokenSvc)
 

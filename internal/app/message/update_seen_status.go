@@ -1,4 +1,4 @@
-package MessageApp
+package message
 
 import (
 	"time"

@@ -1,4 +1,4 @@
-package AuthApp
+package auth
 
 import (
 	"time"

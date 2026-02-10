@@ -1,4 +1,4 @@
-package ChatApp
+package chat
 
 import (
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"

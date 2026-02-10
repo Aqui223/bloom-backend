@@ -1,4 +1,4 @@
-package UserApp
+package user
 
 import (
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"

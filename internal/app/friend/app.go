@@ -1,4 +1,4 @@
-package FriendApp
+package friend
 
 import (
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"

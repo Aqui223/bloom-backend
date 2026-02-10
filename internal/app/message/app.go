@@ -1,4 +1,4 @@
-package MessageApp
+package message
 
 import (
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"

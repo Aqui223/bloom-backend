@@ -1,4 +1,4 @@
-package UserApp
+package user
 
 import (
 	"database/sql"

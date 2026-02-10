@@ -1,4 +1,4 @@
-package ChatApp
+package chat
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"

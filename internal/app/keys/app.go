@@ -1,4 +1,4 @@
-package KeysApp
+package keys
 
 import (
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"

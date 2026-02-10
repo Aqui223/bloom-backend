@@ -1,4 +1,4 @@
-package VerificationApp
+package verification
 
 import (
 	VerificationRepo "github.com/slipe-fun/skid-backend/internal/repository/verification"

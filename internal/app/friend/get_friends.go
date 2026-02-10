@@ -1,11 +1,11 @@
-package FriendApp
+package friend
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/service/logger"
 )
 
-func (f *FriendApp) GetFriends(token, status string,limit, offset int) ([]domain.Friend, error) {
+func (f *FriendApp) GetFriends(token, status string, limit, offset int) ([]domain.Friend, error) {
 	session, err := f.sessionApp.GetSession(token)
 	if err != nil {
 		logger.LogError(err.Error(), "session-app")

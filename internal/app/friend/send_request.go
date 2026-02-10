@@ -1,4 +1,4 @@
-package FriendApp
+package friend
 
 import (
 	"database/sql"

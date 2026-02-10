@@ -1,4 +1,4 @@
-package SessionApp
+package session
 
 import (
 	SessionRepo "github.com/slipe-fun/skid-backend/internal/repository/session"

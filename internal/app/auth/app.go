@@ -1,4 +1,4 @@
-package AuthApp
+package auth
 
 import (
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"

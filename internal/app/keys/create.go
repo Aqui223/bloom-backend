@@ -1,4 +1,4 @@
-package KeysApp
+package keys
 
 import (
 	"encoding/base64"

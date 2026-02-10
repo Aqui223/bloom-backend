@@ -1,4 +1,4 @@
-package MessageApp
+package message
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"

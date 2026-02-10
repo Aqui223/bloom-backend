@@ -1,4 +1,4 @@
-package AuthApp
+package auth
 
 import (
 	"github.com/slipe-fun/skid-backend/internal/domain"

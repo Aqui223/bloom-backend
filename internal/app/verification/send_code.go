@@ -1,4 +1,4 @@
-package VerificationApp
+package verification
 
 import (
 	"fmt"
