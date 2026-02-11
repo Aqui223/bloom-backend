@@ -1,12 +1,10 @@
 package friend
 
-import FriendApp "github.com/slipe-fun/skid-backend/internal/app/friend"
-
 type FriendHandler struct {
-	friendApp *FriendApp.FriendApp
+	friendApp FriendApp
 }
 
-func NewFriendHandler(friendApp *FriendApp.FriendApp) *FriendHandler {
+func NewFriendHandler(friendApp FriendApp) *FriendHandler {
 	return &FriendHandler{
 		friendApp: friendApp,
 	}

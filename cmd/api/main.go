@@ -76,14 +76,14 @@ func main() {
 	keysApp := keysapp.NewKeysApp(sessionApp, keysRepo)
 	friendApp := friendapp.NewFriendApp(sessionApp, friendRepo, userRepo)
 
-	hub := types.NewHub(sessionApp, chatApp, messageApp, userApp, jwtSvc, tokenSvc)
+	hub := types.NewHub(sessionApp, chatApp)
 
-	authHandler := authhandler.NewAuthHandler(authApp, (*google.GoogleAuthService)(googleService))
+	authHandler := authhandler.NewAuthHandler(authApp)
 	userHandler := userhandler.NewUserHandler(userApp, friendApp)
 	chatHandler := chathandler.NewChatHandler(chatApp, userApp, messageApp, hub)
-	messageHandler := messagehandler.NewMessageHandler(chatApp, userApp, messageApp, hub)
+	messageHandler := messagehandler.NewMessageHandler(chatApp, messageApp, hub)
 	sessionHandler := sessionhandler.NewSessionHandler(sessionApp)
-	keysHandler := keyshandler.NewKeysHandler(keysApp, chatApp)
+	keysHandler := keyshandler.NewKeysHandler(keysApp)
 	friendHandler := friendhandler.NewFriendHandler(friendApp)
 
 	fiberApp := fiber.New()

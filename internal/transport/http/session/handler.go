@@ -1,14 +1,10 @@
 package session
 
-import (
-	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"
-)
-
 type SessionHandler struct {
-	sessionApp *SessionApp.SessionApp
+	sessionApp SessionApp
 }
 
-func NewSessionHandler(sessionApp *SessionApp.SessionApp) *SessionHandler {
+func NewSessionHandler(sessionApp SessionApp) *SessionHandler {
 	return &SessionHandler{
 		sessionApp: sessionApp,
 	}

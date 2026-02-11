@@ -1,17 +1,12 @@
 package user
 
-import (
-	FriendApp "github.com/slipe-fun/skid-backend/internal/app/friend"
-	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
-)
-
 type UserHandler struct {
-	userApp   *UserApp.UserApp
-	friendApp *FriendApp.FriendApp
+	userApp   UserApp
+	friendApp FriendApp
 }
 
-func NewUserHandler(userApp *UserApp.UserApp,
-	friendApp *FriendApp.FriendApp) *UserHandler {
+func NewUserHandler(userApp UserApp,
+	friendApp FriendApp) *UserHandler {
 	return &UserHandler{
 		userApp:   userApp,
 		friendApp: friendApp,

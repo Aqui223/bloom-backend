@@ -3,10 +3,7 @@ package types
 import (
 	"github.com/gofiber/websocket/v2"
 	ChatApp "github.com/slipe-fun/skid-backend/internal/app/chat"
-	MessageApp "github.com/slipe-fun/skid-backend/internal/app/message"
 	SessionApp "github.com/slipe-fun/skid-backend/internal/app/session"
-	UserApp "github.com/slipe-fun/skid-backend/internal/app/user"
-	"github.com/slipe-fun/skid-backend/internal/auth"
 )
 
 type Client struct {
@@ -19,22 +16,14 @@ type Hub struct {
 	ClientsByUserID map[int]*Client
 	SessionApp      *SessionApp.SessionApp
 	Chats           *ChatApp.ChatApp
-	Messages        *MessageApp.MessageApp
-	Users           *UserApp.UserApp
-	JwtSvc          *auth.JWTService
-	TokenSvc        *auth.TokenService
 }
 
-func NewHub(SessionApp *SessionApp.SessionApp, Chats *ChatApp.ChatApp, Messages *MessageApp.MessageApp, Users *UserApp.UserApp, JwtSvc *auth.JWTService, TokenSvc *auth.TokenService) *Hub {
+func NewHub(SessionApp *SessionApp.SessionApp, Chats *ChatApp.ChatApp) *Hub {
 	return &Hub{
 		SessionApp:      SessionApp,
 		Clients:         make(map[string]map[*Client]bool),
 		ClientsByUserID: make(map[int]*Client),
 		Chats:           Chats,
-		Messages:        Messages,
-		Users:           Users,
-		JwtSvc:          JwtSvc,
-		TokenSvc:        TokenSvc,
 	}
 }
 
@@ -51,9 +40,7 @@ func (h *Hub) JoinRoom(client *Client, room string) {
 }
 
 func (h *Hub) LeaveRoom(client *Client, room string) {
-	if _, exists := client.Rooms[room]; exists {
-		delete(client.Rooms, room)
-	}
+	delete(client.Rooms, room)
 
 	if clients, ok := h.Clients[room]; ok {
 		delete(clients, client)
