@@ -33,7 +33,7 @@ func (h *FriendHandler) SendRequest(c *fiber.Ctx) error {
 		})
 	}
 
-	err = h.friendApp.SendRequest(token, req.Recipient)
+	status, err := h.friendApp.SendRequest(token, req.Recipient)
 	if appErr, ok := err.(*domain.AppError); ok {
 		return c.Status(appErr.Status).JSON(fiber.Map{
 			"error":   appErr.Code,
@@ -43,5 +43,6 @@ func (h *FriendHandler) SendRequest(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"message": "friend request sent",
+		"status":  status,
 	})
 }

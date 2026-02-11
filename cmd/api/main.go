@@ -84,7 +84,7 @@ func main() {
 	messageHandler := messagehandler.NewMessageHandler(chatApp, messageApp, hub)
 	sessionHandler := sessionhandler.NewSessionHandler(sessionApp)
 	keysHandler := keyshandler.NewKeysHandler(keysApp)
-	friendHandler := friendhandler.NewFriendHandler(friendApp)
+	friendHandler := friendhandler.NewFriendHandler(friendApp, hub)
 
 	fiberApp := fiber.New()
 

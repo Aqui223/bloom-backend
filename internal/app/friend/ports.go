@@ -11,7 +11,7 @@ type FriendRepo interface {
 	Delete(userID, friendID int) error
 	GetFriendCount(userID int) (int, error)
 	GetFriends(userID int, status string, limit, offset int) ([]domain.Friend, error)
-	EditStatus(userID, friendID int, status string) error
+	EditStatus(userID, friendID int, status domain.FriendStatus) error
 	Create(friend *domain.FriendRow) (*domain.FriendRow, error)
 }
 

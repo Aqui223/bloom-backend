@@ -1,6 +1,8 @@
 package friend
 
-func (r *FriendRepo) EditStatus(userID, friendID int, status string) error {
+import "github.com/slipe-fun/skid-backend/internal/domain"
+
+func (r *FriendRepo) EditStatus(userID, friendID int, status domain.FriendStatus) error {
 	query := `
 		UPDATE friends
 		SET status = $1
