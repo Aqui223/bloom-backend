@@ -1,18 +1,15 @@
 package friend
 
 type FriendApp struct {
-	sessionApp SessionApp
-	friends    FriendRepo
-	users      UserRepo
+	friends FriendRepo
+	users   UserRepo
 }
 
-func NewFriendApp(sessionApp SessionApp,
-	friends FriendRepo,
+func NewFriendApp(friends FriendRepo,
 	users UserRepo,
 ) *FriendApp {
 	return &FriendApp{
-		sessionApp: sessionApp,
-		friends:    friends,
-		users:      users,
+		friends: friends,
+		users:   users,
 	}
 }

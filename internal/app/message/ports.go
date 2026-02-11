@@ -6,10 +6,6 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 )
 
-type SessionApp interface {
-	GetSession(token string) (*domain.Session, error)
-}
-
 type MessageRepo interface {
 	Create(message *domain.Message) (*domain.Message, error)
 	UpdateMessagesSeenStatus(messages []int, seenTime time.Time) error

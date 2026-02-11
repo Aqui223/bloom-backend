@@ -1,18 +1,15 @@
 package message
 
 type MessageApp struct {
-	sessionApp SessionApp
-	messages   MessageRepo
-	chats      ChatApp
+	messages MessageRepo
+	chats    ChatApp
 }
 
-func NewMessageApp(sessionApp SessionApp,
-	messages MessageRepo,
+func NewMessageApp(messages MessageRepo,
 	chats ChatApp,
 ) *MessageApp {
 	return &MessageApp{
-		sessionApp: sessionApp,
-		messages:   messages,
-		chats:      chats,
+		messages: messages,
+		chats:    chats,
 	}
 }
