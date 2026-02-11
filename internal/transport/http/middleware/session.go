@@ -32,6 +32,7 @@ func (m *AuthMiddleware) Handle() fiber.Handler {
 		}
 
 		c.Locals("session", session)
+		c.Locals("token", token)
 
 		return c.Next()
 	}

@@ -142,9 +142,9 @@ func main() {
 	fiberApp.Post("/message/send", messageHandler.Send)
 	fiberApp.Post("/message/seen", messageHandler.Seen)
 
-	fiberApp.Get("/sessions", sessionHandler.GetUserSessions)
-	fiberApp.Get("/session", sessionHandler.GetSessionByToken)
-	fiberApp.Post("/session/:id/delete", sessionHandler.DeleteSession)
+	fiberApp.Get("/sessions", authMiddleware.Handle(), sessionHandler.GetUserSessions)
+	fiberApp.Get("/session", authMiddleware.Handle(), sessionHandler.GetSessionByToken)
+	fiberApp.Post("/session/:id/delete", authMiddleware.Handle(), sessionHandler.DeleteSession)
 
 	fiberApp.Get("/ws", websocket.New(handler.HandleWS(hub)))
 

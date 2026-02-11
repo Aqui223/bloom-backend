@@ -5,26 +5,14 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/pkg/logger"
 )
 
-func (s *SessionApp) DeleteSession(id int, token string) error {
-	userID, err := s.tokenSvc.ExtractUserID(token)
-	if err != nil {
-		logger.LogError(err.Error(), "session-app")
-		return domain.Unauthorized("failed to extract token")
-	}
-
-	_, err = s.users.GetByID(userID)
-	if err != nil {
-		logger.LogError(err.Error(), "session-app")
-		return domain.NotFound("user not found")
-	}
-
+func (s *SessionApp) DeleteSession(user_id, id int) error {
 	session, err := s.session.GetByID(id)
 	if err != nil {
 		logger.LogError(err.Error(), "session-app")
 		return domain.NotFound("session not found")
 	}
 
-	if session.UserID != userID {
+	if session.UserID != user_id {
 		return domain.NotFound("session not found")
 	}
 
