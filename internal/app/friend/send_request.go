@@ -8,13 +8,8 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/pkg/logger"
 )
 
-func (f *FriendApp) SendRequest(token string, receiverID int) (domain.FriendStatus, error) {
-	session, err := f.sessionApp.GetSession(token)
-	if err != nil {
-		return domain.FriendStatus(""), err
-	}
-
-	if session.UserID == receiverID {
+func (f *FriendApp) SendRequest(user_id, receiverID int) (domain.FriendStatus, error) {
+	if user_id == receiverID {
 		return domain.FriendStatus(""), domain.InvalidData("cannot add yourself as friend")
 	}
 
@@ -24,11 +19,11 @@ func (f *FriendApp) SendRequest(token string, receiverID int) (domain.FriendStat
 		return domain.FriendStatus(""), domain.NotFound("receiver not found")
 	}
 
-	friend, err := f.friends.GetFriend(session.UserID, receiver.ID)
+	friend, err := f.friends.GetFriend(user_id, receiver.ID)
 	if err == nil {
 		if friend.Status == "pending" {
-			if friend.FriendID == session.UserID {
-				if err := f.friends.EditStatus(session.UserID, receiverID, domain.StatusAccepted); err != nil {
+			if friend.FriendID == user_id {
+				if err := f.friends.EditStatus(user_id, receiverID, domain.StatusAccepted); err != nil {
 					logger.LogError(err.Error(), "friend-app")
 					return domain.FriendStatus(""), domain.Failed("failed to accept friend request")
 				}
@@ -51,7 +46,7 @@ func (f *FriendApp) SendRequest(token string, receiverID int) (domain.FriendStat
 	}
 
 	_, err = f.friends.Create(&domain.FriendRow{
-		UserID:   session.UserID,
+		UserID:   user_id,
 		FriendID: receiver.ID,
 		Status:   domain.StatusPending,
 	})

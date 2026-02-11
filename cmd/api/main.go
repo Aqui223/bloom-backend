@@ -122,9 +122,9 @@ func main() {
 	fiberApp.Get("/user/exists", userHandler.IsUserWithEmailExists)
 	fiberApp.Get("/user/:id", userHandler.GetUserByID)
 
-	fiberApp.Get("/friends/:status", friendHandler.GetFriends)
-	fiberApp.Post("/friend/request", friendHandler.SendRequest)
-	fiberApp.Post("/friend/delete", friendHandler.DeleteFriend)
+	fiberApp.Get("/friends/:status", authMiddleware.Handle(), friendHandler.GetFriends)
+	fiberApp.Post("/friend/request", authMiddleware.Handle(), friendHandler.SendRequest)
+	fiberApp.Post("/friend/delete", authMiddleware.Handle(), friendHandler.DeleteFriend)
 
 	fiberApp.Post("/chat/create", authMiddleware.Handle(), chatHandler.CreateChat)
 	fiberApp.Get("/chats", authMiddleware.Handle(), chatHandler.GetChatsByUserID)

@@ -3,7 +3,7 @@ package friend
 import "github.com/slipe-fun/skid-backend/internal/domain"
 
 type FriendApp interface {
-	SendRequest(string, int) (domain.FriendStatus, error)
-	GetFriends(token, status string, limit, offset int) ([]domain.Friend, error)
-	DeleteFriend(token string, friend_id int) error
+	SendRequest(user_id, receiverID int) (domain.FriendStatus, error)
+	GetFriends(user_id int, status string, limit, offset int) ([]domain.Friend, error)
+	DeleteFriend(user_id, friend_id int) error
 }

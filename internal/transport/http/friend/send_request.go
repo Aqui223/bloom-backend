@@ -3,16 +3,13 @@ package friend
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/slipe-fun/skid-backend/internal/domain"
-	"github.com/slipe-fun/skid-backend/internal/transport/http"
 )
 
 func (h *FriendHandler) SendRequest(c *fiber.Ctx) error {
-	token, err := http.ExtractBearerToken(c)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   "invalid_token",
-			"message": "invalid token",
-		})
+	sessionVal := c.Locals("session")
+	session, ok := sessionVal.(*domain.Session)
+	if !ok {
+		return fiber.ErrUnauthorized
 	}
 
 	var req struct {
@@ -33,7 +30,7 @@ func (h *FriendHandler) SendRequest(c *fiber.Ctx) error {
 		})
 	}
 
-	status, err := h.friendApp.SendRequest(token, req.Recipient)
+	status, err := h.friendApp.SendRequest(session.UserID, req.Recipient)
 	if appErr, ok := err.(*domain.AppError); ok {
 		return c.Status(appErr.Status).JSON(fiber.Map{
 			"error":   appErr.Code,
