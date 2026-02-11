@@ -57,11 +57,11 @@ func main() {
 	)
 
 	verificationRepo := verificationrepo.NewVerificationRepo(db)
-	userRepo := userrepo.NewUserRepo(db, verificationRepo)
+	userRepo := userrepo.NewUserRepo(db)
 	chatRepo := chatrepo.NewChatRepo(db, userRepo)
 	messageRepo := messagerepo.NewMessageRepo(db)
 	sessionRepo := sessionrepo.NewSessionRepo(db, userRepo)
-	keysRepo := keysrepo.NewKeysRepo(db, chatRepo)
+	keysRepo := keysrepo.NewKeysRepo(db)
 	friendRepo := friendrepo.NewFriendRepo(db)
 
 	jwtSvc := authservice.NewJWTService(cfg.JWT.Secret)
