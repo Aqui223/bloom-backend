@@ -7,13 +7,8 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/pkg/logger"
 )
 
-func (k *KeysApp) CreateKeys(token string, keys *domain.EncryptedKeys) (*domain.EncryptedKeys, error) {
-	session, err := k.sessionApp.GetSession(token)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = base64.StdEncoding.DecodeString(keys.Ciphertext)
+func (k *KeysApp) CreateKeys(user_id int, keys *domain.EncryptedKeys) (*domain.EncryptedKeys, error) {
+	_, err := base64.StdEncoding.DecodeString(keys.Ciphertext)
 	if err != nil {
 		logger.LogError(err.Error(), "keys-app")
 		return nil, domain.InvalidData("invalid ciphertext")
@@ -35,7 +30,7 @@ func (k *KeysApp) CreateKeys(token string, keys *domain.EncryptedKeys) (*domain.
 		return nil, domain.InvalidData("invalid salt")
 	}
 
-	existingKeys, err := k.keys.GetByUserID(session.UserID)
+	existingKeys, err := k.keys.GetByUserID(user_id)
 	if err == nil {
 		existingKeys.Ciphertext = keys.Ciphertext
 		existingKeys.Nonce = keys.Nonce
@@ -50,7 +45,7 @@ func (k *KeysApp) CreateKeys(token string, keys *domain.EncryptedKeys) (*domain.
 	}
 
 	keys, err = k.keys.Create(&domain.EncryptedKeys{
-		UserID:     session.UserID,
+		UserID:     user_id,
 		Ciphertext: keys.Ciphertext,
 		Nonce:      keys.Nonce,
 		Salt:       keys.Salt,

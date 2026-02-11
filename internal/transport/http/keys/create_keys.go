@@ -3,16 +3,13 @@ package keys
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/slipe-fun/skid-backend/internal/domain"
-	"github.com/slipe-fun/skid-backend/internal/transport/http"
 )
 
 func (h *KeysHandler) SaveChatKeys(c *fiber.Ctx) error {
-	token, err := http.ExtractBearerToken(c)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   "invalid_token",
-			"message": "invalid token",
-		})
+	sessionVal := c.Locals("session")
+	session, ok := sessionVal.(*domain.Session)
+	if !ok {
+		return fiber.ErrUnauthorized
 	}
 
 	var req struct {
@@ -35,7 +32,7 @@ func (h *KeysHandler) SaveChatKeys(c *fiber.Ctx) error {
 		})
 	}
 
-	_, err = h.keysApp.CreateKeys(token, &domain.EncryptedKeys{
+	_, err := h.keysApp.CreateKeys(session.UserID, &domain.EncryptedKeys{
 		Ciphertext: req.Ciphertext,
 		Nonce:      req.Nonce,
 		Salt:       req.Salt,
