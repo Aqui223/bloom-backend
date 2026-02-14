@@ -18,7 +18,7 @@ func (r *UserRepo) GetByEmail(email string) (*domain.User, error) {
 
 	duration := time.Since(start)
 
-	metrics.ObserveDB("create_friend", duration, err)
+	metrics.ObserveDB("user_get_by_email", duration, err)
 
 	if err != nil {
 		return nil, err
