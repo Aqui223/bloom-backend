@@ -5,8 +5,7 @@ import (
 	"github.com/slipe-fun/skid-backend/internal/domain"
 )
 
-func (h *UserHandler) SearchByUsername(c *fiber.Ctx) error {
-	query := c.Query("q", "")
+func (h *UserHandler) GetAllUsers(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 20)
 	offset := c.QueryInt("offset", 0)
 
@@ -20,14 +19,7 @@ func (h *UserHandler) SearchByUsername(c *fiber.Ctx) error {
 		offset = 0
 	}
 
-	if len(query) == 0 {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error":   "not_found",
-			"message": "users not found",
-		})
-	}
-
-	users, err := h.userApp.SearchUsersByUsername(query, limit, offset)
+	users, err := h.userApp.GetAllUsers(limit, offset)
 	if appErr, ok := err.(*domain.AppError); ok {
 		return c.Status(appErr.Status).JSON(fiber.Map{
 			"error":   appErr.Code,

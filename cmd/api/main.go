@@ -130,6 +130,8 @@ func main() {
 	fiberApp.Get("/user/:id", userHandler.GetUserByID)
 	fiberApp.Get("/user/:id/key-bundle", authMiddleware.Handle(), sessionHandler.GetUserKeyBundle)
 
+	fiberApp.Get("/users", userHandler.GetAllUsers)
+
 	fiberApp.Get("/friends/:status", authMiddleware.Handle(), friendHandler.GetFriends)
 	fiberApp.Post("/friend/request", authMiddleware.Handle(), friendHandler.SendRequest)
 	fiberApp.Post("/friend/delete", authMiddleware.Handle(), friendHandler.DeleteFriend)
