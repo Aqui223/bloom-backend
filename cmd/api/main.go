@@ -152,6 +152,7 @@ func main() {
 
 	fiberApp.Get("/sessions", authMiddleware.Handle(), sessionHandler.GetUserSessions)
 	fiberApp.Get("/session", authMiddleware.Handle(), sessionHandler.GetSessionByToken)
+	fiberApp.Post("/session/add-keys", authMiddleware.Handle(), sessionHandler.AddKeys)
 	fiberApp.Post("/session/:id/delete", authMiddleware.Handle(), sessionHandler.DeleteSession)
 
 	fiberApp.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
