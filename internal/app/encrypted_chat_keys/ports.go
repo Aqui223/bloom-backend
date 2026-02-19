@@ -4,6 +4,7 @@ import "github.com/slipe-fun/skid-backend/internal/domain"
 
 type EncryptedChatKeysRepo interface {
 	Create(keys []*domain.EncryptedChatKeys) ([]*domain.EncryptedChatKeys, error)
+	GetBySessionID(session_id int) ([]*domain.EncryptedChatKeys, error)
 }
 
 type SessionApp interface {
