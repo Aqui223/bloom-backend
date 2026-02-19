@@ -21,15 +21,15 @@ func (s *SessionApp) AddKeys(id, user_id int, identity_pub, ecdh_pub, kyber_pub 
 		return domain.Failed("keys already set for this session")
 	}
 
-	if len(identity_pub) != 32 {
+	if len(identity_pub) != 44 {
 		return domain.InvalidData("invalid identity public key length")
 	}
 
-	if len(ecdh_pub) != 32 {
+	if len(ecdh_pub) != 76 {
 		return domain.InvalidData("invalid ecdh public key length")
 	}
 
-	if len(kyber_pub) != 1184 {
+	if len(kyber_pub) != 1580 {
 		return domain.InvalidData("invalid kyber public key length")
 	}
 

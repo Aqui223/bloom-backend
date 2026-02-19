@@ -17,14 +17,16 @@ func (r *EncryptedChatKeysRepo) Create(keys []*domain.EncryptedChatKeys) ([]*dom
 	start := time.Now()
 
 	valueStrings := make([]string, 0, len(keys))
-	valueArgs := make([]interface{}, 0, len(keys)*6)
+	valueArgs := make([]interface{}, 0, len(keys)*8)
 
 	for i, k := range keys {
-		base := i * 6
+		base := i * 8
 
 		valueStrings = append(valueStrings,
-			fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d)",
-				base+1, base+2, base+3, base+4, base+5, base+6,
+			fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d)",
+				base+1, base+2, base+3,
+				base+4, base+5, base+6,
+				base+7, base+8,
 			),
 		)
 
@@ -33,16 +35,23 @@ func (r *EncryptedChatKeysRepo) Create(keys []*domain.EncryptedChatKeys) ([]*dom
 			k.SessionID,
 			k.EncryptedKey,
 			k.EncapsulatedKey,
-			k.Nonce,
+			k.CekWrap,
+			k.CekWrapIV,
 			k.Salt,
+			k.Nonce,
 		)
 	}
 
 	query := fmt.Sprintf(`
 		INSERT INTO encrypted_chat_keys
-		(chat_id, session_id, encrypted_key, encapsulated_key, nonce, salt)
+		(chat_id, session_id, encrypted_key, encapsulated_key, cek_wrap, cek_wrap_iv, salt, nonce)
 		VALUES %s
-		RETURNING id, chat_id, session_id, encrypted_key, encapsulated_key, nonce, salt, created_at
+		RETURNING 
+			id, chat_id, session_id,
+			encrypted_key, encapsulated_key,
+			cek_wrap, cek_wrap_iv,
+			salt, nonce,
+			created_at
 	`, strings.Join(valueStrings, ","))
 
 	rows, err := r.db.Query(query, valueArgs...)
@@ -64,8 +73,10 @@ func (r *EncryptedChatKeysRepo) Create(keys []*domain.EncryptedChatKeys) ([]*dom
 			&k.SessionID,
 			&k.EncryptedKey,
 			&k.EncapsulatedKey,
-			&k.Nonce,
+			&k.CekWrap,
+			&k.CekWrapIV,
 			&k.Salt,
+			&k.Nonce,
 			&k.CreatedAt,
 		)
 		if err != nil {

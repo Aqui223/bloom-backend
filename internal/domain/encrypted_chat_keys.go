@@ -8,8 +8,10 @@ type EncryptedChatKeys struct {
 	SessionID       int       `db:"session_id" json:"session_id"`
 	EncryptedKey    string    `db:"encrypted_key" json:"encrypted_key"`
 	EncapsulatedKey string    `db:"encapsulated_key" json:"encapsulated_key"`
-	Nonce           string    `db:"nonce" json:"nonce"`
+	CekWrap         string    `db:"cek_wrap" json:"cek_wrap"`
+	CekWrapIV       string    `db:"cek_wrap_iv" json:"cek_wrap_iv"`
 	Salt            string    `db:"salt" json:"salt"`
+	Nonce           string    `db:"nonce" json:"nonce"`
 	CreatedAt       time.Time `db:"created_at" json:"created_at"`
 }
 
@@ -17,6 +19,8 @@ type RawEncryptedChatKeys struct {
 	SessionID       int    `json:"session_id"`
 	EncryptedKey    string `json:"encrypted_key"`
 	EncapsulatedKey string `json:"encapsulated_key"`
-	Nonce           string `json:"nonce"`
+	CekWrap         string `json:"cek_wrap"`
+	CekWrapIV       string `json:"cek_wrap_iv"`
 	Salt            string `json:"salt"`
+	Nonce           string `json:"nonce"`
 }
