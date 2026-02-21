@@ -59,6 +59,8 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 			SessionID:       key.SessionID,
 			EncryptedKey:    key.EncryptedKey,
 			EncapsulatedKey: key.EncapsulatedKey,
+			CekWrap:         key.CekWrap,
+			CekWrapIV:       key.CekWrapIV,
 			Nonce:           key.Nonce,
 			Salt:            key.Salt,
 		})
