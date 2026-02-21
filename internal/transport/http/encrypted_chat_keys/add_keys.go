@@ -12,7 +12,7 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 		return fiber.ErrUnauthorized
 	}
 
-	chat_id, err := c.ParamsInt("id")
+	chatID, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "invalid_request",
@@ -20,10 +20,8 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 		})
 	}
 
-	var req struct {
-		Keys []*domain.RawEncryptedChatKeys
-	}
-
+	// Сразу слайс, чтобы принимать JSON массив
+	var req []*domain.RawEncryptedChatKeys
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "invalid_request",
@@ -31,7 +29,7 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 		})
 	}
 
-	if len(req.Keys) == 0 || len(req.Keys) > 30 {
+	if len(req) == 0 || len(req) > 30 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "invalid_request",
 			"message": "invalid request",
@@ -40,7 +38,7 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 
 	var keys []*domain.EncryptedChatKeys
 
-	for _, key := range req.Keys {
+	for _, key := range req {
 		if key == nil ||
 			key.SessionID <= 0 ||
 			len(key.EncryptedKey) == 0 ||
@@ -55,7 +53,7 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 		}
 
 		keys = append(keys, &domain.EncryptedChatKeys{
-			ChatID:          chat_id,
+			ChatID:          chatID,
 			SessionID:       key.SessionID,
 			EncryptedKey:    key.EncryptedKey,
 			EncapsulatedKey: key.EncapsulatedKey,
@@ -66,7 +64,7 @@ func (h *EncryptedChatKeysHandler) AddKeys(c *fiber.Ctx) error {
 		})
 	}
 
-	createdKeys, err := h.keys.AddKeys(session.UserID, chat_id, keys)
+	createdKeys, err := h.keys.AddKeys(session.UserID, chatID, keys)
 	if err != nil {
 		if appErr, ok := err.(*domain.AppError); ok {
 			return c.Status(appErr.Status).JSON(fiber.Map{
