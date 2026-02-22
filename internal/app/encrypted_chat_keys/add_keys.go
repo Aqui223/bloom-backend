@@ -1,34 +1,37 @@
 package encryptedchatkeys
 
 import (
+	"errors"
+
 	"github.com/slipe-fun/skid-backend/internal/domain"
 	"github.com/slipe-fun/skid-backend/internal/pkg/logger"
 )
 
-func (k *EncryptedChatKeysApp) AddKeys(userID, chatID int, keys []*domain.EncryptedChatKeys) ([]*domain.EncryptedChatKeys, int, error) {
+func (k *EncryptedChatKeysApp) AddKeys(userID, recipientID, chatID int, keys []*domain.EncryptedChatKeys) ([]*domain.EncryptedChatKeys, int, error) {
 	chat, err := k.chats.GetByID(chatID)
 	if err != nil {
 		logger.LogError(err.Error(), "encrypted-chat-keys-app")
 		return nil, 0, domain.NotFound("failed to chat")
 	}
 
-	recipientID := 0
 	isUserInChat := false
+	isRecipientInChat := false
 
 	for _, member := range chat.Members {
 		if member.ID == userID {
 			isUserInChat = true
-		} else {
-			recipientID = member.ID
+		}
+		if member.ID == recipientID {
+			isRecipientInChat = true
 		}
 	}
 
 	if !isUserInChat {
-		return nil, 0, domain.NotFound("failed to chat")
+		return nil, 0, errors.New("user is not a member of the chat")
 	}
 
-	if recipientID == 0 {
-		return nil, 0, domain.InvalidData("recipient is not member of the provided chat")
+	if !isRecipientInChat {
+		return nil, 0, errors.New("recipient is not a member of the chat")
 	}
 
 	seen := make(map[int]struct{}, len(keys))
