@@ -1,5 +1,5 @@
 import requests
-from tests_config import *
+from config_tests import *
 
 # Could use a lib like unittests but not this time
 
