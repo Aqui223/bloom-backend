@@ -220,9 +220,9 @@ while True:
     if yrn("Want me to add this line to tests.py for you?"):
         with open("tests.py", "r") as file:
             tests_code = file.read()
-        ANCHOR_COMMENT = "# Test generator, please add the tests here:"
+        ANCHOR_COMMENT = "# To the test generator script, please add the tests here:"
         try:
-            add_at = tests_code.index(ANCHOR_COMMENT)+1
+            add_at = tests_code.index(ANCHOR_COMMENT)+1+len(ANCHOR_COMMENT)
         except:
             print("Idfk where to add dat shit, man... Can you comment it?")
             print(f"Just write `{ANCHOR_COMMENT}` and I'll add stuff on the next line.")
