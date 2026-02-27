@@ -1,5 +1,5 @@
 import requests
-from tests_config import *
+from config_tests import *
 import tests
 import sys
 import tty
