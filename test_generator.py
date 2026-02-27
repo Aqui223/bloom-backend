@@ -177,9 +177,30 @@ while True:
     print("L - Everything is behaving correctly right now, make sure tests notice if something broke")
     behavior = input_until_correct("Desired behavior", {"e": "\x1b[1mE\x1b[0mrror", "w": "\x1b[1mW\x1b[0mrite", "l": "\x1b[1mL\x1b[0mike now"})
     if behavior == "e":
-        ...
+        request_data = input("Request data (just press enter if none): ")
+
+        # Generation
+        print("\n")
+        if request_data.strip() == "":
+            request_data = None
+
+        if method == "GET":
+            result_code = f"t.g({route}, result=\"error\", request_data={repr(request_data)}, status_code={status_code})"
+        elif method == "POST":
+            result_code = f"t.p({route}, result=\"error\", request_data={repr(request_data)}, status_code={status_code})"
     elif behavior == "w":
-        ...
+        request_data = input("Request data (just press enter if none): ")
+        response_data = input("Response data: ")
+
+        # Generation
+        print("\n")
+        if request_data.strip() == "":
+            request_data = None
+
+        if method == "GET":
+            result_code = f"t.g({route}, result=\"error\", request_data={repr(request_data)}, status_code={status_code})"
+        elif method == "POST":
+            result_code = f"t.p({route}, result={repr(response_data)}, request_data={repr(request_data)}, status_code={status_code})"
     elif behavior == "l":
         request_data = input("Request data (just press enter if none): ")
 
@@ -193,13 +214,13 @@ while True:
             result_code = f"t.p({route}, result={repr(response)}, request_data={repr(request_data)}, status_code={status_code})"
         else:
             raise NameError("Invalid method, what could possibly cause this??")
-        print(result_code)
+    print(result_code)
 
-        print("\n")
-        if yrn("Want me to add this line to tests.py for you?"):
-            with open("tests.py", "r") as file:
-                tests_code = file.read()
-            add_at = min([(tests_code+"t.g(\"").index("t.g(\""),
-                          (tests_code+"t.p(\"").index("t.p(\"")])
-            result_file_code = tests_code[:add_at]+result_code+"\n"+tests_code[add_at:]
-            with open("test2.py", "w") as file: file.write(result_file_code)
+    print("\n")
+    if yrn("Want me to add this line to tests.py for you?"):
+        with open("tests.py", "r") as file:
+            tests_code = file.read()
+        add_at = min([(tests_code+"t.g(\"").index("t.g(\""),
+                      (tests_code+"t.p(\"").index("t.p(\"")])
+        result_file_code = tests_code[:add_at]+result_code+"\n"+tests_code[add_at:]
+        with open("test2.py", "w") as file: file.write(result_file_code)
