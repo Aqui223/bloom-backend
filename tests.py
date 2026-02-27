@@ -6,7 +6,7 @@ if "quiet" in sys.argv:
     t.show_success = False
     show_missing = False
 
-
+# To the test generator script, please add the tests here:
 t.g("/ws")
 t.g("/metrics")
 t.g("/session")
