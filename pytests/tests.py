@@ -1,6 +1,8 @@
 import customlib_testing as t
 import sys
 
+# NOTE: RUN FROM OUTSIDE THE PYTESTS DIRECTORY, DO NOT CD INTO IT
+
 show_missing = True
 if "quiet" in sys.argv:
     t.show_success = False
