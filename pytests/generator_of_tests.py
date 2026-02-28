@@ -218,7 +218,7 @@ while True:
 
     print("\n")
     if yrn("Want me to add this line to tests.py for you?"):
-        with open("tests.py", "r") as file:
+        with open("pytests/tests.py", "r") as file:
             tests_code = file.read()
         ANCHOR_COMMENT = "# To the test generator script, please add the tests here:"
         try:
@@ -228,4 +228,4 @@ while True:
             print(f"Just write `{ANCHOR_COMMENT}` and I'll add stuff on the next line.")
             exit()
         result_file_code = tests_code[:add_at]+result_code+"\n"+tests_code[add_at:]
-        with open("tests.py", "w") as file: file.write(result_file_code)
+        with open("pytests/tests.py", "w") as file: file.write(result_file_code)
