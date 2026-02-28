@@ -67,7 +67,7 @@ class Test:
             if valid_response:
                 printsuccess(self.route, "response")
         else:
-            valid_response = response.text == self.result
+            valid_response = resp.text == self.result
         return valid_response_code and valid_response
 
 
