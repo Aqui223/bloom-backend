@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	authapp "github.com/slipe-fun/skid-backend/internal/app/auth"
 	chatapp "github.com/slipe-fun/skid-backend/internal/app/chat"
@@ -101,6 +102,11 @@ func main() {
 	fiberApp := fiber.New()
 
 	fiberApp.Use(recover.New())
+    fiberApp.Use(cors.New(cors.Config{
+        AllowOrigins: "*",
+        AllowMethods: "GET,POST",
+        AllowHeaders: "Origin, Content-Type, Accept",
+    }))
 
 	if cfg.RateLimit.Enabled {
 		rateLimiter := middleware.NewAdaptiveRateLimiter(cfg.RateLimitWindow())
@@ -132,7 +138,7 @@ func main() {
 	fiberApp.Get("/user/me", authMiddleware.Handle(), userHandler.GetUser)
 	fiberApp.Post("/user/edit", authMiddleware.Handle(), userHandler.EditUser)
 	fiberApp.Get("/user/search", userHandler.SearchByUsername)
-	fiberApp.Get("/user/exists", userHandler.IsUserWithEmailExists)
+	fiberApp.Get("/user/exists", userHandler.DoesUserExistGivenEmail)
 	fiberApp.Get("/user/:id", userHandler.GetUserByID)
 	fiberApp.Get("/user/:id/key-bundle", authMiddleware.Handle(), sessionHandler.GetUserKeyBundle)
 
@@ -154,7 +160,7 @@ func main() {
 	fiberApp.Post("/chat/:id/keys/public", authMiddleware.Handle(), chatHandler.AddChatKeys)
 
 	fiberApp.Post("/chats/keys/private", authMiddleware.Handle(), keysHandler.SaveChatKeys)
-	fiberApp.Get("/chats/keys/private", authMiddleware.Handle(), keysHandler.GetUserChatsKeys)
+	fiberApp.Get("/chats/keys/private", authMiddleware.Handle(), keysHandler.GetUserChatKeys)
 
 	fiberApp.Get("/message/:id", authMiddleware.Handle(), messageHandler.GetMessageByID)
 	fiberApp.Post("/message/send", authMiddleware.Handle(), messageHandler.Send)
